@@ -1,0 +1,11 @@
+Id: BeautyCons.eb7017af-c0ee-4416-aec5-27d516530af7
+Name: BeautyCons
+Author: Huddini
+Version: 1.0.0
+Module: BeautyCons.dll
+Type: GenericPlugin
+Icon: icon.png
+Description: A Playnite extension that enhances your game library with beautiful, customizable icons and visual improvements.
+Links:
+  - Name: GitHub Repository
+    Url: https://github.com/aHuddini/BeautyCons
