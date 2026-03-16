@@ -46,7 +46,7 @@ namespace BeautyCons
             Properties = new GenericPluginProperties { HasSettings = true };
 
             _settingsViewModel = new BeautyConsSettingsViewModel(this);
-            _iconGlowManager = new IconGlowManager(_settingsViewModel);
+            _iconGlowManager = new IconGlowManager(_settingsViewModel, api.Paths.ExtensionsDataPath);
         }
 
         public override void OnApplicationStarted(OnApplicationStartedEventArgs args)

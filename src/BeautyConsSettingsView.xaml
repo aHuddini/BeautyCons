@@ -61,6 +61,11 @@
                         <ComboBoxItem Content="Neon — Bold multi-layer additive glow" Tag="{x:Static glow:GlowStyle.Neon}"/>
                         <ComboBoxItem Content="Soft — Wide dreamy single-layer glow" Tag="{x:Static glow:GlowStyle.Soft}"/>
                         <ComboBoxItem Content="Sharp — Tight edge highlight" Tag="{x:Static glow:GlowStyle.Sharp}"/>
+                        <ComboBoxItem Content="Bloom — Overexposed bright center" Tag="{x:Static glow:GlowStyle.Bloom}"/>
+                        <ComboBoxItem Content="Halo — Soft ring around icon" Tag="{x:Static glow:GlowStyle.Halo}"/>
+                        <ComboBoxItem Content="Diamond — Diamond-shaped glow" Tag="{x:Static glow:GlowStyle.Diamond}"/>
+                        <ComboBoxItem Content="Cross — Cross-shaped glow" Tag="{x:Static glow:GlowStyle.Cross}"/>
+                        <ComboBoxItem Content="Star — 4-pointed star burst" Tag="{x:Static glow:GlowStyle.Star}"/>
                     </ComboBox>
 
                     <TextBlock Text="Glow Size" FontWeight="SemiBold" Margin="0,15,0,5"/>
@@ -79,11 +84,105 @@
                                 Value="{Binding Settings.IconGlowIntensity}"/>
                     </DockPanel>
 
-                    <CheckBox Content="Use Custom Colors"
-                              IsChecked="{Binding Settings.UseCustomColors}"
+                    <CheckBox Content="Enable Spin Rotation"
+                              IsChecked="{Binding Settings.EnableIconGlowSpin}"
                               Margin="0,15,0,5"/>
+                    <TextBlock Text="Rotates the glow effect around the icon"
+                               FontSize="11" Foreground="Gray" TextWrapping="Wrap" Margin="20,0,0,5"/>
 
-                    <StackPanel Margin="20,0,0,0" IsEnabled="{Binding Settings.UseCustomColors}">
+                    <StackPanel Margin="20,0,0,0" IsEnabled="{Binding Settings.EnableIconGlowSpin}">
+                        <TextBlock Text="Spin Speed (seconds per rotation)" FontWeight="SemiBold" Margin="0,5,0,5"/>
+                        <DockPanel Margin="0,0,0,5">
+                            <TextBlock DockPanel.Dock="Right" Width="30" TextAlignment="Center"
+                                       Text="{Binding Settings.IconGlowSpinSpeed, StringFormat={}{0:F0}}"/>
+                            <Slider Minimum="5" Maximum="60" TickFrequency="1" IsSnapToTickEnabled="True"
+                                    Value="{Binding Settings.IconGlowSpinSpeed}"/>
+                        </DockPanel>
+                    </StackPanel>
+
+                    <CheckBox Content="Enable Pulse"
+                              IsChecked="{Binding Settings.EnablePulse}"
+                              Margin="0,15,0,5"/>
+                    <TextBlock Text="Glow breathes in and out on a smooth cycle"
+                               FontSize="11" Foreground="Gray" TextWrapping="Wrap" Margin="20,0,0,5"/>
+
+                    <StackPanel Margin="20,0,0,0" IsEnabled="{Binding Settings.EnablePulse}">
+                        <TextBlock Text="Pulse Speed (seconds per cycle)" FontWeight="SemiBold" Margin="0,5,0,5"/>
+                        <DockPanel Margin="0,0,0,5">
+                            <TextBlock DockPanel.Dock="Right" Width="30" TextAlignment="Center"
+                                       Text="{Binding Settings.PulseSpeed, StringFormat={}{0:F1}}"/>
+                            <Slider Minimum="1.0" Maximum="10.0" TickFrequency="0.5" IsSnapToTickEnabled="True"
+                                    Value="{Binding Settings.PulseSpeed}"/>
+                        </DockPanel>
+                        <TextBlock Text="Minimum Opacity" FontWeight="SemiBold" Margin="0,5,0,5"/>
+                        <DockPanel Margin="0,0,0,5">
+                            <TextBlock DockPanel.Dock="Right" Width="35" TextAlignment="Center"
+                                       Text="{Binding Settings.PulseMinOpacity, StringFormat={}{0:P0}}"/>
+                            <Slider Minimum="0.0" Maximum="0.8" TickFrequency="0.05" IsSnapToTickEnabled="True"
+                                    Value="{Binding Settings.PulseMinOpacity}"/>
+                        </DockPanel>
+                    </StackPanel>
+
+                    <CheckBox Content="Enable Color Cycle"
+                              IsChecked="{Binding Settings.EnableColorCycle}"
+                              Margin="0,15,0,5"/>
+                    <TextBlock Text="Gradually shifts glow colors over time"
+                               FontSize="11" Foreground="Gray" TextWrapping="Wrap" Margin="20,0,0,5"/>
+
+                    <StackPanel Margin="20,0,0,0" IsEnabled="{Binding Settings.EnableColorCycle}">
+                        <TextBlock Text="Cycle Duration (seconds for full rotation)" FontWeight="SemiBold" Margin="0,5,0,5"/>
+                        <DockPanel Margin="0,0,0,5">
+                            <TextBlock DockPanel.Dock="Right" Width="30" TextAlignment="Center"
+                                       Text="{Binding Settings.ColorCycleSpeed, StringFormat={}{0:F0}}"/>
+                            <Slider Minimum="4" Maximum="30" TickFrequency="1" IsSnapToTickEnabled="True"
+                                    Value="{Binding Settings.ColorCycleSpeed}"/>
+                        </DockPanel>
+                    </StackPanel>
+
+                    <CheckBox Content="Enable Sparkles"
+                              IsChecked="{Binding Settings.EnableSparkles}"
+                              Margin="0,15,0,5"/>
+                    <TextBlock Text="Small bright dots appear and fade around the glow"
+                               FontSize="11" Foreground="Gray" TextWrapping="Wrap" Margin="20,0,0,5"/>
+
+                    <StackPanel Margin="20,0,0,0" IsEnabled="{Binding Settings.EnableSparkles}">
+                        <TextBlock Text="Sparkle Count" FontWeight="SemiBold" Margin="0,5,0,5"/>
+                        <DockPanel Margin="0,0,0,5">
+                            <TextBlock DockPanel.Dock="Right" Width="30" TextAlignment="Center"
+                                       Text="{Binding Settings.SparkleCount}"/>
+                            <Slider Minimum="4" Maximum="30" TickFrequency="1" IsSnapToTickEnabled="True"
+                                    Value="{Binding Settings.SparkleCount}"/>
+                        </DockPanel>
+                        <TextBlock Text="Sparkle Speed" FontWeight="SemiBold" Margin="0,5,0,5"/>
+                        <DockPanel Margin="0,0,0,5">
+                            <TextBlock DockPanel.Dock="Right" Width="30" TextAlignment="Center"
+                                       Text="{Binding Settings.SparkleSpeed, StringFormat={}{0:F1}}"/>
+                            <Slider Minimum="0.3" Maximum="3.0" TickFrequency="0.1" IsSnapToTickEnabled="True"
+                                    Value="{Binding Settings.SparkleSpeed}"/>
+                        </DockPanel>
+                    </StackPanel>
+
+                    <TextBlock Text="Color Preset" FontWeight="SemiBold" Margin="0,15,0,5"/>
+                    <ComboBox SelectedValue="{Binding Settings.ColorPreset}"
+                              SelectedValuePath="Tag"
+                              Width="200" HorizontalAlignment="Left">
+                        <ComboBoxItem Content="Auto (from icon)" Tag="{x:Static glow:ColorPreset.Auto}"/>
+                        <ComboBoxItem Content="Hot Pink" Tag="{x:Static glow:ColorPreset.HotPink}"/>
+                        <ComboBoxItem Content="Ocean" Tag="{x:Static glow:ColorPreset.Ocean}"/>
+                        <ComboBoxItem Content="Sunset" Tag="{x:Static glow:ColorPreset.Sunset}"/>
+                        <ComboBoxItem Content="Neon Green" Tag="{x:Static glow:ColorPreset.NeonGreen}"/>
+                        <ComboBoxItem Content="Purple Haze" Tag="{x:Static glow:ColorPreset.PurpleHaze}"/>
+                        <ComboBoxItem Content="Ice" Tag="{x:Static glow:ColorPreset.Ice}"/>
+                        <ComboBoxItem Content="Fire" Tag="{x:Static glow:ColorPreset.Fire}"/>
+                        <ComboBoxItem Content="Gold" Tag="{x:Static glow:ColorPreset.Gold}"/>
+                        <ComboBoxItem Content="Vampire" Tag="{x:Static glow:ColorPreset.Vampire}"/>
+                        <ComboBoxItem Content="Mint" Tag="{x:Static glow:ColorPreset.Mint}"/>
+                        <ComboBoxItem Content="Synthwave" Tag="{x:Static glow:ColorPreset.Synthwave}"/>
+                        <ComboBoxItem Content="Monochrome" Tag="{x:Static glow:ColorPreset.Monochrome}"/>
+                        <ComboBoxItem Content="Custom..." Tag="{x:Static glow:ColorPreset.Custom}"/>
+                    </ComboBox>
+
+                    <StackPanel Margin="20,5,0,0" x:Name="CustomColorPanel">
                         <DockPanel Margin="0,5">
                             <TextBlock Text="Primary Color:" Width="110" VerticalAlignment="Center"/>
                             <TextBox Text="{Binding Settings.CustomColor1, UpdateSourceTrigger=PropertyChanged}"
@@ -97,6 +196,7 @@
                         <TextBlock Text="Enter colors as hex values (e.g. #6495ED)"
                                    FontSize="11" Foreground="Gray" Margin="0,2,0,0"/>
                     </StackPanel>
+
                 </StackPanel>
             </ScrollViewer>
         </TabItem>

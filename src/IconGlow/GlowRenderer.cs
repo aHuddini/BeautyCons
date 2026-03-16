@@ -49,32 +49,42 @@ namespace BeautyCons.IconGlow
                     var canvas = surface.Canvas;
                     canvas.Clear(SKColors.Transparent);
 
-                    var skInfo = new SKImageInfo(srcWidth, srcHeight, SKColorType.Bgra8888, SKAlphaType.Unpremul);
-                    using (var skBitmap = new SKBitmap(skInfo))
+                    if (styleParams.Shape != GlowShape.Normal)
                     {
-                        var ptr = skBitmap.GetPixels();
-                        Marshal.Copy(srcPixels, 0, ptr, srcPixels.Length);
-                        skBitmap.NotifyPixelsChanged();
-
-                        var tinted1 = BuildTintedBitmap(skBitmap, color1, intensity);
-                        var tinted2 = BuildTintedBitmap(skBitmap, color2, intensity);
-
-                        var rect1 = new SKRect(
-                            ext - shift, ext - shift,
-                            ext + targetW - shift, ext + targetH - shift);
-                        var rect2 = new SKRect(
-                            ext + shift, ext + shift,
-                            ext + targetW + shift, ext + targetH + shift);
-
-                        foreach (var layer in styleParams.Layers)
+                        // Shape glow: draw the shape itself as the glow source, then blur it
+                        DrawShapeGlow(canvas, styleParams, color1, color2, intensity,
+                            outWidth, outHeight, ext, targetW, targetH, (float)baseSigma, shift);
+                    }
+                    else
+                    {
+                        // Normal glow: use icon bitmap as glow source
+                        var skInfo = new SKImageInfo(srcWidth, srcHeight, SKColorType.Bgra8888, SKAlphaType.Unpremul);
+                        using (var skBitmap = new SKBitmap(skInfo))
                         {
-                            float sigma = (float)(baseSigma * layer.SigmaMultiplier);
-                            DrawBlurredLayer(canvas, tinted1, rect1, sigma, layer.Alpha, styleParams.BlendMode);
-                            DrawBlurredLayer(canvas, tinted2, rect2, sigma, layer.Alpha, styleParams.BlendMode);
-                        }
+                            var ptr = skBitmap.GetPixels();
+                            Marshal.Copy(srcPixels, 0, ptr, srcPixels.Length);
+                            skBitmap.NotifyPixelsChanged();
 
-                        tinted1.Dispose();
-                        tinted2.Dispose();
+                            var tinted1 = BuildTintedBitmap(skBitmap, color1, intensity);
+                            var tinted2 = BuildTintedBitmap(skBitmap, color2, intensity);
+
+                            var rect1 = new SKRect(
+                                ext - shift, ext - shift,
+                                ext + targetW - shift, ext + targetH - shift);
+                            var rect2 = new SKRect(
+                                ext + shift, ext + shift,
+                                ext + targetW + shift, ext + targetH + shift);
+
+                            foreach (var layer in styleParams.Layers)
+                            {
+                                float sigma = (float)(baseSigma * layer.SigmaMultiplier);
+                                DrawBlurredLayer(canvas, tinted1, rect1, sigma, layer.Alpha, styleParams.BlendMode);
+                                DrawBlurredLayer(canvas, tinted2, rect2, sigma, layer.Alpha, styleParams.BlendMode);
+                            }
+
+                            tinted1.Dispose();
+                            tinted2.Dispose();
+                        }
                     }
 
                     using (var snapshot = surface.Snapshot())
@@ -100,6 +110,111 @@ namespace BeautyCons.IconGlow
             {
                 return null;
             }
+        }
+
+        private static void DrawShapeGlow(SKCanvas canvas, GlowStyleParams styleParams,
+            Color color1, Color color2, double intensity,
+            int outWidth, int outHeight, int ext, int targetW, int targetH,
+            float baseSigma, float shift)
+        {
+            // Center of the icon area within the extended surface
+            float cx = outWidth / 2f;
+            float cy = outHeight / 2f;
+            // Shape size based on icon dimensions (slightly larger to wrap around icon)
+            float hw = targetW / 2f * 1.1f;
+            float hh = targetH / 2f * 1.1f;
+
+            var path1 = CreateShapePath(styleParams.Shape, cx - shift, cy - shift, hw, hh);
+            var path2 = CreateShapePath(styleParams.Shape, cx + shift, cy + shift, hw, hh);
+            if (path1 == null || path2 == null)
+            {
+                path1?.Dispose();
+                path2?.Dispose();
+                return;
+            }
+
+            byte r1 = color1.R, g1 = color1.G, b1 = color1.B;
+            byte r2 = color2.R, g2 = color2.G, b2 = color2.B;
+            byte alpha = (byte)Math.Min(255, 200 * intensity);
+
+            foreach (var layer in styleParams.Layers)
+            {
+                float sigma = baseSigma * layer.SigmaMultiplier;
+
+                using (var blur = SKImageFilter.CreateBlur(sigma, sigma))
+                using (var paint = new SKPaint())
+                {
+                    paint.IsAntialias = true;
+                    paint.ImageFilter = blur;
+                    paint.BlendMode = styleParams.BlendMode;
+                    paint.Style = SKPaintStyle.Fill;
+
+                    // Draw shape with color1
+                    paint.Color = new SKColor(r1, g1, b1, (byte)(layer.Alpha * alpha));
+                    canvas.DrawPath(path1, paint);
+
+                    // Draw shape with color2
+                    paint.Color = new SKColor(r2, g2, b2, (byte)(layer.Alpha * alpha));
+                    canvas.DrawPath(path2, paint);
+                }
+            }
+
+            path1.Dispose();
+            path2.Dispose();
+        }
+
+        private static SKPath CreateShapePath(GlowShape shape, float cx, float cy, float hw, float hh)
+        {
+            var path = new SKPath();
+
+            switch (shape)
+            {
+                case GlowShape.Diamond:
+                    path.MoveTo(cx, cy - hh);       // top
+                    path.LineTo(cx + hw, cy);        // right
+                    path.LineTo(cx, cy + hh);        // bottom
+                    path.LineTo(cx - hw, cy);        // left
+                    path.Close();
+                    break;
+
+                case GlowShape.Star:
+                    // 4-pointed star with thin spikes
+                    float innerR = Math.Min(hw, hh) * 0.3f;
+                    path.MoveTo(cx, cy - hh);          // top spike
+                    path.LineTo(cx + innerR, cy - innerR);
+                    path.LineTo(cx + hw, cy);          // right spike
+                    path.LineTo(cx + innerR, cy + innerR);
+                    path.LineTo(cx, cy + hh);          // bottom spike
+                    path.LineTo(cx - innerR, cy + innerR);
+                    path.LineTo(cx - hw, cy);          // left spike
+                    path.LineTo(cx - innerR, cy - innerR);
+                    path.Close();
+                    break;
+
+                case GlowShape.Cross:
+                    float armW = hw * 0.35f;
+                    float armH = hh * 0.35f;
+                    path.MoveTo(cx - armW, cy - hh);
+                    path.LineTo(cx + armW, cy - hh);
+                    path.LineTo(cx + armW, cy - armH);
+                    path.LineTo(cx + hw, cy - armH);
+                    path.LineTo(cx + hw, cy + armH);
+                    path.LineTo(cx + armW, cy + armH);
+                    path.LineTo(cx + armW, cy + hh);
+                    path.LineTo(cx - armW, cy + hh);
+                    path.LineTo(cx - armW, cy + armH);
+                    path.LineTo(cx - hw, cy + armH);
+                    path.LineTo(cx - hw, cy - armH);
+                    path.LineTo(cx - armW, cy - armH);
+                    path.Close();
+                    break;
+
+                default:
+                    path.Dispose();
+                    return null;
+            }
+
+            return path;
         }
 
         private static SKBitmap BuildTintedBitmap(SKBitmap srcBitmap, Color tint, double intensity)
