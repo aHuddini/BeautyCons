@@ -6,12 +6,15 @@ using System.Windows.Controls;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Threading;
+using Playnite.SDK;
 using Playnite.SDK.Models;
 
 namespace BeautyCons.IconGlow
 {
     public class IconGlowManager
     {
+        private static readonly ILogger Logger = LogManager.GetLogger();
+
         private readonly BeautyConsSettingsViewModel _settingsViewModel;
         private readonly IconColorExtractor _colorExtractor = new IconColorExtractor();
         private readonly GlowCache _glowCache;
@@ -156,13 +159,15 @@ namespace BeautyCons.IconGlow
                 {
                     if (_currentGlowImage != null)
                     {
-                        // Stop animations, queue the game, darken old glow
+                        // Stop animations and fade out from current opacity (no snap)
                         StopAnimTimer();
+                        Logger.Info($"[BeautyCons] GameSwitch: stopped anim, fading out from opacity {_currentGlowImage.Opacity:F2}");
                         _pendingGame = game;
                         StartFadeOut();
                     }
                     else
                     {
+                        Logger.Info($"[BeautyCons] GameSwitch: no existing glow, applying directly");
                         // No existing glow — apply directly
                         ApplyGlow(game);
                     }
@@ -173,10 +178,22 @@ namespace BeautyCons.IconGlow
         {
             StopFadeTimer();
 
-            if (_currentGlowImage == null) return;
+            if (_currentGlowImage == null)
+            {
+                Logger.Info("[BeautyCons] StartFadeOut: no glow image, skipping");
+                // No glow to fade — apply pending game immediately
+                if (_pendingGame != null)
+                {
+                    var game = _pendingGame;
+                    _pendingGame = null;
+                    ApplyGlow(game);
+                }
+                return;
+            }
 
             _fadingOutGlowImage = _currentGlowImage;
             _fadeOutOpacity = _fadingOutGlowImage.Opacity;
+            Logger.Info($"[BeautyCons] StartFadeOut: starting from opacity {_fadeOutOpacity:F2}");
 
             _fadeTimer = new DispatcherTimer
             {
@@ -199,11 +216,13 @@ namespace BeautyCons.IconGlow
                     _fadingOutGlowImage.Opacity = 0;
                     _fadingOutGlowImage = null;
 
+                    Logger.Info("[BeautyCons] FadeOut complete");
                     // Fade-out complete — apply pending game if queued
                     if (_pendingGame != null)
                     {
                         var game = _pendingGame;
                         _pendingGame = null;
+                        Logger.Info($"[BeautyCons] Applying pending game: {game.Name}");
                         StopFadeTimer();
                         ApplyGlow(game);
                         return;
@@ -226,6 +245,10 @@ namespace BeautyCons.IconGlow
                     _isFadingIn = false;
 
                     // Fade-in complete — now start animations
+                    // Reset pulse phase so it starts at peak (opacity 1.0)
+                    // sin(π/2) = 1.0, so offset start time by PulseSpeed/4 into the past
+                    _animStartTime = DateTime.UtcNow - TimeSpan.FromSeconds(Settings.PulseSpeed / 4.0);
+                    Logger.Info("[BeautyCons] FadeIn complete, starting animations from pulse peak");
                     UpdateAnimationState();
                 }
                 else
@@ -244,6 +267,7 @@ namespace BeautyCons.IconGlow
         {
             if (_currentGlowImage == null) return;
 
+            Logger.Info("[BeautyCons] StartFadeIn: opacity → 0, beginning ramp up");
             _isFadingIn = true;
             _fadeInOpacity = 0;
             _currentGlowImage.Opacity = 0;
@@ -325,9 +349,13 @@ namespace BeautyCons.IconGlow
             var cached = _glowCache.TryGetMemory(cacheKey);
             if (cached != null)
             {
+                Logger.Info("[BeautyCons] Memory cache HIT");
+                // Clear any lingering fade-out reference so it doesn't fight with fade-in
+                _fadingOutGlowImage = null;
                 ApplyGlowToIcon(icon, cached, styleParams, baseSigma);
                 return;
             }
+            Logger.Info("[BeautyCons] Memory cache MISS, checking disk/rendering");
 
             // Extract pixels on UI thread
             byte[] pixels = null;
@@ -362,6 +390,8 @@ namespace BeautyCons.IconGlow
                         new Action(() =>
                         {
                             if (myVersion != _renderVersion) return;
+                            Logger.Info("[BeautyCons] Disk cache HIT");
+                            _fadingOutGlowImage = null;
                             ApplyGlowToIcon(icon, diskCached, styleParams, baseSigma);
                         }));
                     return;
@@ -385,6 +415,8 @@ namespace BeautyCons.IconGlow
                     new Action(() =>
                     {
                         if (myVersion != _renderVersion) return;
+                        Logger.Info("[BeautyCons] Render complete, applying");
+                        _fadingOutGlowImage = null;
                         ApplyGlowToIcon(icon, glowBitmap, styleParams, baseSigma);
                     }));
             });
@@ -399,6 +431,7 @@ namespace BeautyCons.IconGlow
             if (_currentIcon == icon && _currentGlowImage != null && _currentWrapperGrid != null
                 && _currentParentPanel != null && _currentParentPanel.Children.Contains(_currentWrapperGrid))
             {
+                Logger.Info("[BeautyCons] ApplyGlowToIcon: reusing wrapper, swapping source");
                 _currentGlowImage.Source = glowBitmap;
                 _currentGlowImage.Width = icon.ActualWidth + extend * 2;
                 _currentGlowImage.Height = icon.ActualHeight + extend * 2;

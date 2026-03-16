@@ -1,0 +1,17 @@
+AddonId: 'BeautyCons.eb7017af-c0ee-4416-aec5-27d516530af7'
+Packages:
+  - Version: 1.0.0
+    RequiredApiVersion: 6.15.0
+    ReleaseDate: 2026-03-16
+    PackageUrl: 'https://github.com/aHuddini/BeautyCons/releases/download/1.0.0/BeautyCons.eb7017af-c0ee-4416-aec5-27d516530af7_1_0_0.pext'
+    Changelog:
+      - 'Initial release of BeautyCons — beautiful icon glow effects for Playnite.'
+      - '[Glow Styles] 8 glow styles: Neon, Soft, Sharp, Bloom, Halo, Diamond, Cross, Star. Each with unique visual character from multi-layer additive neon to shaped geometric glows.'
+      - '[Color Presets] 13 built-in color presets (Hot Pink, Ocean, Sunset, Neon Green, Purple Haze, Ice, Fire, Gold, Vampire, Mint, Synthwave, Monochrome) plus Auto (extracted from game icon) and Custom hex input.'
+      - '[Spin Rotation] Configurable glow rotation with adjustable speed (5–60 seconds per revolution).'
+      - '[Pulse Animation] Sine wave opacity breathing with configurable speed and minimum opacity.'
+      - '[Color Cycle] Gradual hue rotation over time with configurable cycle duration.'
+      - '[Sparkle Overlay] Particle dots that appear, drift, and fade around the glow. Configurable count and speed.'
+      - '[Glow Cache] Two-tier caching (memory + disk) for instant glow display on revisited games and fast startup.'
+      - '[Smooth Transitions] Darken-then-fade-in transitions on game switch with phase-aligned animation restart.'
+      - '[Performance] SkiaSharp rendering on background thread. No UI-blocking operations. All animations at 60fps via unified timer.'
