@@ -21,9 +21,19 @@ namespace BeautyCons
         private string customColor2 = "#B464FF";
         private bool enableShineSweep = false;
         private double shineSweepSpeed = 3.0;
+        private bool enableTilt = false;
+        private double tiltSpeed = 2.5;
+        private double tiltPauseMin = 1.0;
+        private double tiltPauseMax = 4.0;
         private bool enableShimmer = false;
         private double shimmerSpeed = 2.5;
-        private double shimmerOpacity = 0.55;
+        private double shimmerOpacity = 0.85;
+        private double shimmerPauseMin = 1.0;
+        private double shimmerPauseMax = 4.0;
+        private ShineStyle shimmerShineStyle = ShineStyle.White;
+        private bool enableColorShimmer = false;
+        private double colorShimmerSpeed = 2.5;
+        private double colorShimmerOpacity = 0.65;
         private bool enablePulse = false;
         private double pulseSpeed = 3.0;
         private double pulseMinOpacity = 0.4;
@@ -111,6 +121,30 @@ namespace BeautyCons
             set { shineSweepSpeed = value; OnPropertyChanged(); }
         }
 
+        public bool EnableTilt
+        {
+            get => enableTilt;
+            set { enableTilt = value; OnPropertyChanged(); }
+        }
+
+        public double TiltSpeed
+        {
+            get => tiltSpeed;
+            set { tiltSpeed = value; OnPropertyChanged(); }
+        }
+
+        public double TiltPauseMin
+        {
+            get => tiltPauseMin;
+            set { tiltPauseMin = value; OnPropertyChanged(); }
+        }
+
+        public double TiltPauseMax
+        {
+            get => tiltPauseMax;
+            set { tiltPauseMax = value; OnPropertyChanged(); }
+        }
+
         public bool EnableShimmer
         {
             get => enableShimmer;
@@ -127,6 +161,42 @@ namespace BeautyCons
         {
             get => shimmerOpacity;
             set { shimmerOpacity = value; OnPropertyChanged(); }
+        }
+
+        public double ShimmerPauseMin
+        {
+            get => shimmerPauseMin;
+            set { shimmerPauseMin = value; OnPropertyChanged(); }
+        }
+
+        public double ShimmerPauseMax
+        {
+            get => shimmerPauseMax;
+            set { shimmerPauseMax = value; OnPropertyChanged(); }
+        }
+
+        public ShineStyle ShimmerShineStyle
+        {
+            get => shimmerShineStyle;
+            set { shimmerShineStyle = value; OnPropertyChanged(); }
+        }
+
+        public bool EnableColorShimmer
+        {
+            get => enableColorShimmer;
+            set { enableColorShimmer = value; OnPropertyChanged(); }
+        }
+
+        public double ColorShimmerSpeed
+        {
+            get => colorShimmerSpeed;
+            set { colorShimmerSpeed = value; OnPropertyChanged(); }
+        }
+
+        public double ColorShimmerOpacity
+        {
+            get => colorShimmerOpacity;
+            set { colorShimmerOpacity = value; OnPropertyChanged(); }
         }
 
         public bool EnablePulse

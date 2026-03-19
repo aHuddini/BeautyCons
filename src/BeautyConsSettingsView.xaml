@@ -183,10 +183,26 @@
                     <CheckBox Content="Enable Shimmer"
                               IsChecked="{Binding Settings.EnableShimmer}"
                               Margin="0,15,0,5"/>
-                    <TextBlock Text="Subtle 3D tilt with synchronized shine sweep — like tilting a glossy card under light. Works best with square icons."
+                    <TextBlock Text="Shine sweep with metallic luster — a glossy light bar glides across the icon with directional lighting."
                                FontSize="11" Foreground="Gray" TextWrapping="Wrap" Margin="20,0,0,5"/>
 
                     <StackPanel Margin="20,0,0,0" IsEnabled="{Binding Settings.EnableShimmer}">
+                        <CheckBox Content="Include Tilt"
+                                  IsChecked="{Binding Settings.EnableTilt}"
+                                  Margin="0,5,0,3"/>
+                        <TextBlock Text="Adds a subtle 3D tilt rocking motion synced with the shimmer cycle. Works best with smaller or circular icons."
+                                   FontSize="11" Foreground="Gray" TextWrapping="Wrap" Margin="20,0,0,8"/>
+                        <TextBlock Text="Shine Style" FontWeight="SemiBold" Margin="0,5,0,5"/>
+                        <ComboBox SelectedValue="{Binding Settings.ShimmerShineStyle}"
+                                  SelectedValuePath="Tag"
+                                  Width="220" HorizontalAlignment="Left" Margin="0,0,0,8">
+                            <ComboBoxItem Content="White — Clean specular highlight" Tag="{x:Static glow:ShineStyle.White}"/>
+                            <ComboBoxItem Content="Gold — Warm legendary rarity shine" Tag="{x:Static glow:ShineStyle.Gold}"/>
+                            <ComboBoxItem Content="Holographic — Rainbow iridescence" Tag="{x:Static glow:ShineStyle.Holographic}"/>
+                            <ComboBoxItem Content="Platinum — Cool silver-blue metallic" Tag="{x:Static glow:ShineStyle.Platinum}"/>
+                            <ComboBoxItem Content="Crimson — Deep red/orange epic shine" Tag="{x:Static glow:ShineStyle.Crimson}"/>
+                            <ComboBoxItem Content="Icon Colors — Uses glow colors" Tag="{x:Static glow:ShineStyle.IconColors}"/>
+                        </ComboBox>
                         <TextBlock Text="Shimmer Speed (seconds per cycle)" FontWeight="SemiBold" Margin="0,5,0,5"/>
                         <DockPanel Margin="0,0,0,5">
                             <TextBlock DockPanel.Dock="Right" Width="30" TextAlignment="Center"
@@ -200,6 +216,46 @@
                                        Text="{Binding Settings.ShimmerOpacity, StringFormat={}{0:P0}}"/>
                             <Slider Minimum="0.1" Maximum="0.9" TickFrequency="0.05" IsSnapToTickEnabled="True"
                                     Value="{Binding Settings.ShimmerOpacity}"/>
+                        </DockPanel>
+                        <TextBlock Text="Pause Between Shimmers (seconds)" FontWeight="SemiBold" Margin="0,5,0,3"/>
+                        <TextBlock Text="Random delay between shine sweeps"
+                                   FontSize="11" Foreground="Gray" Margin="0,0,0,5"/>
+                        <DockPanel Margin="0,0,0,5">
+                            <TextBlock DockPanel.Dock="Left" Text="Min:" Width="30" VerticalAlignment="Center"/>
+                            <TextBlock DockPanel.Dock="Right" Width="30" TextAlignment="Center"
+                                       Text="{Binding Settings.ShimmerPauseMin, StringFormat={}{0:F1}}"/>
+                            <Slider Minimum="0.0" Maximum="8.0" TickFrequency="0.5" IsSnapToTickEnabled="True"
+                                    Value="{Binding Settings.ShimmerPauseMin}"/>
+                        </DockPanel>
+                        <DockPanel Margin="0,0,0,5">
+                            <TextBlock DockPanel.Dock="Left" Text="Max:" Width="30" VerticalAlignment="Center"/>
+                            <TextBlock DockPanel.Dock="Right" Width="30" TextAlignment="Center"
+                                       Text="{Binding Settings.ShimmerPauseMax, StringFormat={}{0:F1}}"/>
+                            <Slider Minimum="0.0" Maximum="12.0" TickFrequency="0.5" IsSnapToTickEnabled="True"
+                                    Value="{Binding Settings.ShimmerPauseMax}"/>
+                        </DockPanel>
+                    </StackPanel>
+
+                    <CheckBox Content="Enable Color Shimmer"
+                              IsChecked="{Binding Settings.EnableColorShimmer}"
+                              Margin="0,15,0,5"/>
+                    <TextBlock Text="Same tilt+shine as Shimmer, but the light sweep uses the icon's glow colors instead of white. Overrides standard Shimmer if both are enabled."
+                               FontSize="11" Foreground="Gray" TextWrapping="Wrap" Margin="20,0,0,5"/>
+
+                    <StackPanel Margin="20,0,0,0" IsEnabled="{Binding Settings.EnableColorShimmer}">
+                        <TextBlock Text="Sweep Speed (seconds per cycle)" FontWeight="SemiBold" Margin="0,5,0,5"/>
+                        <DockPanel Margin="0,0,0,5">
+                            <TextBlock DockPanel.Dock="Right" Width="30" TextAlignment="Center"
+                                       Text="{Binding Settings.ColorShimmerSpeed, StringFormat={}{0:F1}}"/>
+                            <Slider Minimum="1.0" Maximum="10.0" TickFrequency="0.5" IsSnapToTickEnabled="True"
+                                    Value="{Binding Settings.ColorShimmerSpeed}"/>
+                        </DockPanel>
+                        <TextBlock Text="Color Shimmer Intensity" FontWeight="SemiBold" Margin="0,5,0,5"/>
+                        <DockPanel Margin="0,0,0,5">
+                            <TextBlock DockPanel.Dock="Right" Width="35" TextAlignment="Center"
+                                       Text="{Binding Settings.ColorShimmerOpacity, StringFormat={}{0:P0}}"/>
+                            <Slider Minimum="0.1" Maximum="0.9" TickFrequency="0.05" IsSnapToTickEnabled="True"
+                                    Value="{Binding Settings.ColorShimmerOpacity}"/>
                         </DockPanel>
                     </StackPanel>
 

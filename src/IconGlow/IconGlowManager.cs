@@ -39,6 +39,7 @@ namespace BeautyCons.IconGlow
         private RotateTransform _glowRotate;
         private double _glowAngle;
         private DateTime _animStartTime;
+        private DateTime _pulseStartTime;
         private SparkleOverlay _sparkleOverlay;
         private Color _activeColor1, _activeColor2;
 
@@ -63,6 +64,7 @@ namespace BeautyCons.IconGlow
             _settingsViewModel = settingsViewModel;
             _glowCache = new GlowCache(extensionsDataPath);
             _animStartTime = DateTime.UtcNow;
+            _pulseStartTime = _animStartTime;
             _lastColorCycleTime = _animStartTime;
 
             _settingsViewModel.PropertyChanged += OnViewModelPropertyChanged;
@@ -125,9 +127,16 @@ namespace BeautyCons.IconGlow
 
                 case nameof(BeautyConsSettings.EnableShineSweep):
                 case nameof(BeautyConsSettings.ShineSweepSpeed):
+                case nameof(BeautyConsSettings.EnableTilt):
                 case nameof(BeautyConsSettings.EnableShimmer):
                 case nameof(BeautyConsSettings.ShimmerSpeed):
                 case nameof(BeautyConsSettings.ShimmerOpacity):
+                case nameof(BeautyConsSettings.ShimmerShineStyle):
+                case nameof(BeautyConsSettings.ShimmerPauseMin):
+                case nameof(BeautyConsSettings.ShimmerPauseMax):
+                case nameof(BeautyConsSettings.EnableColorShimmer):
+                case nameof(BeautyConsSettings.ColorShimmerSpeed):
+                case nameof(BeautyConsSettings.ColorShimmerOpacity):
                     if (_currentIcon != null && _currentWrapperGrid != null)
                     {
                         Application.Current?.Dispatcher?.BeginInvoke(
@@ -173,7 +182,8 @@ namespace BeautyCons.IconGlow
                 {
                     if (_currentGlowImage != null)
                     {
-                        // Stop animations and fade out from current opacity (no snap)
+                        // Reset effects to neutral before fade-out (no visual snap)
+                        _iconEffects.ResetToNeutral();
                         StopAnimTimer();
                         Logger.Info($"[BeautyCons] GameSwitch: stopped anim, fading out from opacity {_currentGlowImage.Opacity:F2}");
                         _pendingGame = game;
@@ -258,13 +268,11 @@ namespace BeautyCons.IconGlow
                     _currentGlowImage.Opacity = 1.0;
                     _isFadingIn = false;
 
-                    // Fade-in complete — now start animations
+                    // Fade-in complete — start glow animations (spin, pulse, sparkles)
                     // Reset pulse phase so it starts at peak (opacity 1.0)
-                    // sin(π/2) = 1.0, so offset start time by PulseSpeed/4 into the past
-                    _animStartTime = DateTime.UtcNow - TimeSpan.FromSeconds(Settings.PulseSpeed / 4.0);
-                    Logger.Info("[BeautyCons] FadeIn complete, starting animations from pulse peak");
+                    _pulseStartTime = DateTime.UtcNow - TimeSpan.FromSeconds(Settings.PulseSpeed / 4.0);
+                    Logger.Info("[BeautyCons] FadeIn complete, starting glow animations");
                     UpdateAnimationState();
-                    ApplyIconEffects();
                 }
                 else
                 {
@@ -451,7 +459,10 @@ namespace BeautyCons.IconGlow
                 _currentGlowImage.Width = icon.ActualWidth + extend * 2;
                 _currentGlowImage.Height = icon.ActualHeight + extend * 2;
                 _currentGlowImage.Margin = new Thickness(-extend);
-                StartFadeIn();
+                ApplyIconEffects();
+                // Only fade in if glow isn't already visible (avoids blink on color cycle re-render)
+                if (_currentGlowImage.Opacity < 0.01)
+                    StartFadeIn();
                 return;
             }
 
@@ -492,6 +503,7 @@ namespace BeautyCons.IconGlow
             _currentWrapperGrid = wrapper;
             _currentGlowImage = glowImage;
 
+            ApplyIconEffects();
             StartFadeIn();
         }
 
@@ -537,7 +549,8 @@ namespace BeautyCons.IconGlow
                 Settings.EnableSparkles ||
                 Settings.EnableColorCycle ||
                 Settings.EnableShineSweep ||
-                Settings.EnableShimmer);
+                Settings.EnableShimmer ||
+                Settings.EnableColorShimmer);
 
             if (needsAnimation)
             {
@@ -601,9 +614,17 @@ namespace BeautyCons.IconGlow
                 _iconEffects.RemoveShineSweep(_currentWrapperGrid);
             }
 
-            if (Settings.EnableShimmer)
+            // Shimmer (includes tilt when enabled — one unified cycle)
+            double now = (DateTime.UtcNow - _animStartTime).TotalSeconds;
+            bool tilt = Settings.EnableTilt;
+            if (Settings.EnableColorShimmer)
             {
-                _iconEffects.ApplyShimmer(_currentWrapperGrid, _currentIcon, Settings.ShimmerOpacity, _activeColor1, _activeColor2);
+                _iconEffects.ApplyShimmer(_currentWrapperGrid, _currentIcon, Settings.ColorShimmerOpacity, _activeColor1, _activeColor2, ShineStyle.IconColors, tilt, now);
+                StartAnimTimer();
+            }
+            else if (Settings.EnableShimmer)
+            {
+                _iconEffects.ApplyShimmer(_currentWrapperGrid, _currentIcon, Settings.ShimmerOpacity, _activeColor1, _activeColor2, Settings.ShimmerShineStyle, tilt, now);
                 StartAnimTimer();
             }
             else
@@ -669,10 +690,11 @@ namespace BeautyCons.IconGlow
                 _glowRotate.Angle = _glowAngle;
             }
 
-            // Pulse (sine wave opacity breathing)
+            // Pulse (sine wave opacity breathing) — uses separate pulse clock
             if (Settings.EnablePulse)
             {
-                double sine = Math.Sin(elapsed * 2 * Math.PI / Settings.PulseSpeed);
+                double pulseElapsed = (DateTime.UtcNow - _pulseStartTime).TotalSeconds;
+                double sine = Math.Sin(pulseElapsed * 2 * Math.PI / Settings.PulseSpeed);
                 double range = 1.0 - Settings.PulseMinOpacity;
                 double opacity = Settings.PulseMinOpacity + (sine * 0.5 + 0.5) * range;
                 _currentGlowImage.Opacity = Math.Max(0, Math.Min(1, opacity));
@@ -707,10 +729,14 @@ namespace BeautyCons.IconGlow
                 _iconEffects.UpdateShineSweep(Settings.ShineSweepSpeed);
             }
 
-            // Shimmer sweep
-            if (Settings.EnableShimmer)
+            // Shimmer + tilt (unified cycle — color shimmer takes priority)
+            if (Settings.EnableColorShimmer)
             {
-                _iconEffects.UpdateShimmer(Settings.ShimmerSpeed);
+                _iconEffects.UpdateShimmer(Settings.ColorShimmerSpeed, elapsed, Settings.ShimmerPauseMin, Settings.ShimmerPauseMax);
+            }
+            else if (Settings.EnableShimmer)
+            {
+                _iconEffects.UpdateShimmer(Settings.ShimmerSpeed, elapsed, Settings.ShimmerPauseMin, Settings.ShimmerPauseMax);
             }
         }
 

@@ -2,6 +2,16 @@ using System.Windows.Media;
 
 namespace BeautyCons.IconGlow
 {
+    public enum ShineStyle
+    {
+        White,
+        Gold,
+        Holographic,
+        Platinum,
+        Crimson,
+        IconColors
+    }
+
     public enum ColorPreset
     {
         Auto,
