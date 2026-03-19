@@ -27,6 +27,14 @@
     </ItemGroup>
 
     <ItemGroup>
+        <Resource Include="PreviewIcons\dark_devotion.png" />
+        <Resource Include="PreviewIcons\doom2.png" />
+        <Resource Include="PreviewIcons\duke3d.png" />
+        <Resource Include="PreviewIcons\deus_ex_iw.png" />
+        <Resource Include="PreviewIcons\star_renegades.png" />
+    </ItemGroup>
+
+    <ItemGroup>
         <None Include="..\extension.yaml">
             <CopyToOutputDirectory>Always</CopyToOutputDirectory>
         </None>

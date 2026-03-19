@@ -16,6 +16,15 @@ namespace BeautyCons.IconGlow
         Vampire,
         Mint,
         Synthwave,
+        Retrowave,
+        Vaporwave,
+        Cyberpunk,
+        Aurora,
+        Electric,
+        Plasma,
+        Toxic,
+        Hologram,
+        Dreamscape,
         Monochrome,
         Custom
     }
@@ -48,6 +57,24 @@ namespace BeautyCons.IconGlow
                     return (Color.FromRgb(0x98, 0xFB, 0x98), Color.FromRgb(0x00, 0xFA, 0x9A));
                 case ColorPreset.Synthwave:
                     return (Color.FromRgb(0xFF, 0x00, 0xFF), Color.FromRgb(0x00, 0xFF, 0xFF));
+                case ColorPreset.Retrowave:
+                    return (Color.FromRgb(0xFF, 0x14, 0x93), Color.FromRgb(0x00, 0xFF, 0x88));
+                case ColorPreset.Vaporwave:
+                    return (Color.FromRgb(0xFF, 0x71, 0xCE), Color.FromRgb(0x01, 0xCD, 0xFE));
+                case ColorPreset.Cyberpunk:
+                    return (Color.FromRgb(0xFF, 0xFF, 0x00), Color.FromRgb(0xFF, 0x00, 0xFF));
+                case ColorPreset.Aurora:
+                    return (Color.FromRgb(0x00, 0xFF, 0x7F), Color.FromRgb(0x8A, 0x2B, 0xE2));
+                case ColorPreset.Electric:
+                    return (Color.FromRgb(0x00, 0xBF, 0xFF), Color.FromRgb(0xFF, 0x45, 0x00));
+                case ColorPreset.Plasma:
+                    return (Color.FromRgb(0xFF, 0x00, 0x80), Color.FromRgb(0x80, 0x00, 0xFF));
+                case ColorPreset.Toxic:
+                    return (Color.FromRgb(0x39, 0xFF, 0x14), Color.FromRgb(0xFF, 0x07, 0x3A));
+                case ColorPreset.Hologram:
+                    return (Color.FromRgb(0x00, 0xFF, 0xEF), Color.FromRgb(0xFF, 0x00, 0xC8));
+                case ColorPreset.Dreamscape:
+                    return (Color.FromRgb(0xB3, 0x88, 0xFF), Color.FromRgb(0x80, 0xD8, 0xFF));
                 case ColorPreset.Monochrome:
                     return (Color.FromRgb(0xFF, 0xFF, 0xFF), Color.FromRgb(0xC0, 0xC0, 0xC0));
                 default:

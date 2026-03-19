@@ -19,6 +19,11 @@ namespace BeautyCons
         private ColorPreset colorPreset = ColorPreset.Auto;
         private string customColor1 = "#6495ED";
         private string customColor2 = "#B464FF";
+        private bool enableShineSweep = false;
+        private double shineSweepSpeed = 3.0;
+        private bool enableShimmer = false;
+        private double shimmerSpeed = 2.5;
+        private double shimmerOpacity = 0.55;
         private bool enablePulse = false;
         private double pulseSpeed = 3.0;
         private double pulseMinOpacity = 0.4;
@@ -92,6 +97,36 @@ namespace BeautyCons
         {
             get => customColor2;
             set { customColor2 = value; OnPropertyChanged(); }
+        }
+
+        public bool EnableShineSweep
+        {
+            get => enableShineSweep;
+            set { enableShineSweep = value; OnPropertyChanged(); }
+        }
+
+        public double ShineSweepSpeed
+        {
+            get => shineSweepSpeed;
+            set { shineSweepSpeed = value; OnPropertyChanged(); }
+        }
+
+        public bool EnableShimmer
+        {
+            get => enableShimmer;
+            set { enableShimmer = value; OnPropertyChanged(); }
+        }
+
+        public double ShimmerSpeed
+        {
+            get => shimmerSpeed;
+            set { shimmerSpeed = value; OnPropertyChanged(); }
+        }
+
+        public double ShimmerOpacity
+        {
+            get => shimmerOpacity;
+            set { shimmerOpacity = value; OnPropertyChanged(); }
         }
 
         public bool EnablePulse

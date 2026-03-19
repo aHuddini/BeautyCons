@@ -66,6 +66,24 @@ namespace BeautyCons
                     ? Visibility.Visible : Visibility.Collapsed;
         }
 
+        private void RefreshPreview_Click(object sender, RoutedEventArgs e)
+        {
+            LoadPreview();
+        }
+
+        private void LoadPreview()
+        {
+            var vm = DataContext as BeautyConsSettingsViewModel;
+            if (vm == null) return;
+
+            try
+            {
+                var preview = new GlowPreview(vm.Settings);
+                preview.RenderPreview(PreviewContainer);
+            }
+            catch { }
+        }
+
         private void ResetGeneralTab_Click(object sender, RoutedEventArgs e)
         {
             var vm = DataContext as BeautyConsSettingsViewModel;
@@ -98,6 +116,11 @@ namespace BeautyCons
             vm.Settings.IconGlowIntensity = 1.8;
             vm.Settings.EnableIconGlowSpin = false;
             vm.Settings.IconGlowSpinSpeed = 20.0;
+            vm.Settings.EnableShineSweep = false;
+            vm.Settings.ShineSweepSpeed = 3.0;
+            vm.Settings.EnableShimmer = false;
+            vm.Settings.ShimmerSpeed = 4.0;
+            vm.Settings.ShimmerOpacity = 0.55;
             vm.Settings.EnablePulse = false;
             vm.Settings.PulseSpeed = 3.0;
             vm.Settings.PulseMinOpacity = 0.4;

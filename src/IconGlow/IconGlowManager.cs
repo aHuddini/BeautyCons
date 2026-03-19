@@ -18,6 +18,7 @@ namespace BeautyCons.IconGlow
         private readonly BeautyConsSettingsViewModel _settingsViewModel;
         private readonly IconColorExtractor _colorExtractor = new IconColorExtractor();
         private readonly GlowCache _glowCache;
+        private readonly IconEffects _iconEffects = new IconEffects();
 
         private BeautyConsSettings Settings => _settingsViewModel.Settings;
 
@@ -119,6 +120,19 @@ namespace BeautyCons.IconGlow
                         Application.Current?.Dispatcher?.BeginInvoke(
                             DispatcherPriority.Loaded,
                             new Action(() => ApplyGlow(_activeGame)));
+                    }
+                    break;
+
+                case nameof(BeautyConsSettings.EnableShineSweep):
+                case nameof(BeautyConsSettings.ShineSweepSpeed):
+                case nameof(BeautyConsSettings.EnableShimmer):
+                case nameof(BeautyConsSettings.ShimmerSpeed):
+                case nameof(BeautyConsSettings.ShimmerOpacity):
+                    if (_currentIcon != null && _currentWrapperGrid != null)
+                    {
+                        Application.Current?.Dispatcher?.BeginInvoke(
+                            DispatcherPriority.Loaded,
+                            new Action(() => ApplyIconEffects()));
                     }
                     break;
 
@@ -250,6 +264,7 @@ namespace BeautyCons.IconGlow
                     _animStartTime = DateTime.UtcNow - TimeSpan.FromSeconds(Settings.PulseSpeed / 4.0);
                     Logger.Info("[BeautyCons] FadeIn complete, starting animations from pulse peak");
                     UpdateAnimationState();
+                    ApplyIconEffects();
                 }
                 else
                 {
@@ -482,6 +497,10 @@ namespace BeautyCons.IconGlow
 
         private void RemoveGlowVisuals()
         {
+            // Clean up icon effects before unwrapping
+            if (_currentWrapperGrid != null)
+                _iconEffects.RemoveAll(_currentWrapperGrid);
+
             bool wrapperIsLive = _currentWrapperGrid != null && _currentParentPanel != null
                               && _currentParentPanel.Children.Contains(_currentWrapperGrid);
 
@@ -516,7 +535,9 @@ namespace BeautyCons.IconGlow
                 Settings.EnableIconGlowSpin ||
                 Settings.EnablePulse ||
                 Settings.EnableSparkles ||
-                Settings.EnableColorCycle);
+                Settings.EnableColorCycle ||
+                Settings.EnableShineSweep ||
+                Settings.EnableShimmer);
 
             if (needsAnimation)
             {
@@ -566,6 +587,31 @@ namespace BeautyCons.IconGlow
             }
         }
 
+        private void ApplyIconEffects()
+        {
+            if (_currentIcon == null || _currentWrapperGrid == null) return;
+
+            if (Settings.EnableShineSweep)
+            {
+                _iconEffects.ApplyShineSweep(_currentWrapperGrid, _currentIcon);
+                StartAnimTimer();
+            }
+            else
+            {
+                _iconEffects.RemoveShineSweep(_currentWrapperGrid);
+            }
+
+            if (Settings.EnableShimmer)
+            {
+                _iconEffects.ApplyShimmer(_currentWrapperGrid, _currentIcon, Settings.ShimmerOpacity, _activeColor1, _activeColor2);
+                StartAnimTimer();
+            }
+            else
+            {
+                _iconEffects.RemoveShimmer(_currentWrapperGrid);
+            }
+        }
+
         private void RemoveSparkleOverlay()
         {
             if (_sparkleOverlay != null)
@@ -608,8 +654,16 @@ namespace BeautyCons.IconGlow
             double elapsed = (DateTime.UtcNow - _animStartTime).TotalSeconds;
 
             // Spin
-            if (Settings.EnableIconGlowSpin && _glowRotate != null)
+            if (Settings.EnableIconGlowSpin && _currentGlowImage != null)
             {
+                // Ensure RotateTransform exists on the glow image
+                if (_glowRotate == null)
+                {
+                    _glowRotate = new RotateTransform(_glowAngle);
+                    _currentGlowImage.RenderTransform = _glowRotate;
+                    _currentGlowImage.RenderTransformOrigin = new System.Windows.Point(0.5, 0.5);
+                }
+
                 double degreesPerFrame = 360.0 / (Settings.IconGlowSpinSpeed * 60.0);
                 _glowAngle = (_glowAngle + degreesPerFrame) % 360.0;
                 _glowRotate.Angle = _glowAngle;
@@ -645,6 +699,18 @@ namespace BeautyCons.IconGlow
             if (Settings.EnableSparkles && _sparkleOverlay != null)
             {
                 _sparkleOverlay.Update(Settings.SparkleSpeed);
+            }
+
+            // Shine sweep
+            if (Settings.EnableShineSweep)
+            {
+                _iconEffects.UpdateShineSweep(Settings.ShineSweepSpeed);
+            }
+
+            // Shimmer sweep
+            if (Settings.EnableShimmer)
+            {
+                _iconEffects.UpdateShimmer(Settings.ShimmerSpeed);
             }
         }
 

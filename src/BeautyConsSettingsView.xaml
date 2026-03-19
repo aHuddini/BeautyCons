@@ -162,6 +162,47 @@
                         </DockPanel>
                     </StackPanel>
 
+                    <TextBlock Text="Icon Effects" FontSize="16" FontWeight="Bold" Margin="0,20,0,10"/>
+
+                    <CheckBox Content="Enable Shine Sweep"
+                              IsChecked="{Binding Settings.EnableShineSweep}"
+                              Margin="0,15,0,5"/>
+                    <TextBlock Text="A diagonal light sweep moves across the icon like a glossy surface. Works best with square icons."
+                               FontSize="11" Foreground="Gray" TextWrapping="Wrap" Margin="20,0,0,5"/>
+
+                    <StackPanel Margin="20,0,0,0" IsEnabled="{Binding Settings.EnableShineSweep}">
+                        <TextBlock Text="Sweep Speed (seconds per sweep)" FontWeight="SemiBold" Margin="0,5,0,5"/>
+                        <DockPanel Margin="0,0,0,5">
+                            <TextBlock DockPanel.Dock="Right" Width="30" TextAlignment="Center"
+                                       Text="{Binding Settings.ShineSweepSpeed, StringFormat={}{0:F1}}"/>
+                            <Slider Minimum="1.0" Maximum="8.0" TickFrequency="0.5" IsSnapToTickEnabled="True"
+                                    Value="{Binding Settings.ShineSweepSpeed}"/>
+                        </DockPanel>
+                    </StackPanel>
+
+                    <CheckBox Content="Enable Shimmer"
+                              IsChecked="{Binding Settings.EnableShimmer}"
+                              Margin="0,15,0,5"/>
+                    <TextBlock Text="Subtle 3D tilt with synchronized shine sweep — like tilting a glossy card under light. Works best with square icons."
+                               FontSize="11" Foreground="Gray" TextWrapping="Wrap" Margin="20,0,0,5"/>
+
+                    <StackPanel Margin="20,0,0,0" IsEnabled="{Binding Settings.EnableShimmer}">
+                        <TextBlock Text="Shimmer Speed (seconds per cycle)" FontWeight="SemiBold" Margin="0,5,0,5"/>
+                        <DockPanel Margin="0,0,0,5">
+                            <TextBlock DockPanel.Dock="Right" Width="30" TextAlignment="Center"
+                                       Text="{Binding Settings.ShimmerSpeed, StringFormat={}{0:F1}}"/>
+                            <Slider Minimum="1.0" Maximum="10.0" TickFrequency="0.5" IsSnapToTickEnabled="True"
+                                    Value="{Binding Settings.ShimmerSpeed}"/>
+                        </DockPanel>
+                        <TextBlock Text="Shimmer Intensity" FontWeight="SemiBold" Margin="0,5,0,5"/>
+                        <DockPanel Margin="0,0,0,5">
+                            <TextBlock DockPanel.Dock="Right" Width="35" TextAlignment="Center"
+                                       Text="{Binding Settings.ShimmerOpacity, StringFormat={}{0:P0}}"/>
+                            <Slider Minimum="0.1" Maximum="0.9" TickFrequency="0.05" IsSnapToTickEnabled="True"
+                                    Value="{Binding Settings.ShimmerOpacity}"/>
+                        </DockPanel>
+                    </StackPanel>
+
                     <TextBlock Text="Color Preset" FontWeight="SemiBold" Margin="0,15,0,5"/>
                     <ComboBox SelectedValue="{Binding Settings.ColorPreset}"
                               SelectedValuePath="Tag"
@@ -178,6 +219,15 @@
                         <ComboBoxItem Content="Vampire" Tag="{x:Static glow:ColorPreset.Vampire}"/>
                         <ComboBoxItem Content="Mint" Tag="{x:Static glow:ColorPreset.Mint}"/>
                         <ComboBoxItem Content="Synthwave" Tag="{x:Static glow:ColorPreset.Synthwave}"/>
+                        <ComboBoxItem Content="Retrowave" Tag="{x:Static glow:ColorPreset.Retrowave}"/>
+                        <ComboBoxItem Content="Vaporwave" Tag="{x:Static glow:ColorPreset.Vaporwave}"/>
+                        <ComboBoxItem Content="Cyberpunk" Tag="{x:Static glow:ColorPreset.Cyberpunk}"/>
+                        <ComboBoxItem Content="Aurora" Tag="{x:Static glow:ColorPreset.Aurora}"/>
+                        <ComboBoxItem Content="Electric" Tag="{x:Static glow:ColorPreset.Electric}"/>
+                        <ComboBoxItem Content="Plasma" Tag="{x:Static glow:ColorPreset.Plasma}"/>
+                        <ComboBoxItem Content="Toxic" Tag="{x:Static glow:ColorPreset.Toxic}"/>
+                        <ComboBoxItem Content="Hologram" Tag="{x:Static glow:ColorPreset.Hologram}"/>
+                        <ComboBoxItem Content="Dreamscape" Tag="{x:Static glow:ColorPreset.Dreamscape}"/>
                         <ComboBoxItem Content="Monochrome" Tag="{x:Static glow:ColorPreset.Monochrome}"/>
                         <ComboBoxItem Content="Custom..." Tag="{x:Static glow:ColorPreset.Custom}"/>
                     </ComboBox>
@@ -199,6 +249,34 @@
 
                 </StackPanel>
             </ScrollViewer>
+        </TabItem>
+        <!-- Preview Tab -->
+        <TabItem Header="Preview">
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="*"/>
+                    <RowDefinition Height="Auto"/>
+                </Grid.RowDefinitions>
+
+                <StackPanel Grid.Row="0" Margin="20,15,20,10">
+                    <TextBlock Text="Glow Preview" FontSize="18" FontWeight="Bold"/>
+                    <TextBlock Text="Shows how your current glow settings look on example game icons"
+                               FontSize="11" Foreground="Gray" Margin="0,3,0,0"/>
+                </StackPanel>
+
+                <Border Grid.Row="1" Margin="20,0,20,10"
+                        CornerRadius="6" BorderThickness="1"
+                        BorderBrush="#333344">
+                    <Grid x:Name="PreviewContainer"
+                          Background="#1A1A2E"/>
+                </Border>
+
+                <Button Grid.Row="2" Content="Refresh Preview"
+                        Click="RefreshPreview_Click"
+                        HorizontalAlignment="Center"
+                        Padding="20,6" Margin="0,0,0,15" FontSize="12"/>
+            </Grid>
         </TabItem>
     </TabControl>
 </UserControl>
