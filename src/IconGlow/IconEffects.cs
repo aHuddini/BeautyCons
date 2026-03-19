@@ -134,9 +134,30 @@ namespace BeautyCons.IconGlow
                 _shineStyle = style;
                 _shimmerOpacity = opacity;
                 _tiltEnabled = enableTilt;
-                // Re-cache icon pixels in case the icon source changed (game switch)
+
+                // Detect icon source change (game switch on reused grid)
+                bool iconChanged = !ReferenceEquals(icon.Source, _cachedIconSource);
                 CacheIconPixels(icon);
-                Logger.Info("[FX] ApplyShimmer: idempotent update (same grid)");
+
+                if (iconChanged)
+                {
+                    // Clear the old rendered frame immediately so we don't flash the
+                    // previous game's luster/shine for a frame or two
+                    _shimmerOverlay.Source = null;
+                    _shimmerOverlay.Opacity = 0;
+
+                    // Invalidate SkiaSharp surfaces so they get recreated at new size
+                    if (_skiaSurface != null) { _skiaSurface.Dispose(); _skiaSurface = null; }
+                    if (_effectSurface != null) { _effectSurface.Dispose(); _effectSurface = null; }
+                    _surfW = _surfH = 0;
+                    _writeableBmp = null;
+
+                    // Update display dimensions for the new icon
+                    _iconW = icon.ActualWidth > 0 ? icon.ActualWidth : 64;
+                    _iconH = icon.ActualHeight > 0 ? icon.ActualHeight : 64;
+
+                    Logger.Info("[FX] ApplyShimmer: icon changed on same grid, cleared old frame");
+                }
                 return;
             }
 
@@ -304,27 +325,54 @@ namespace BeautyCons.IconGlow
                 if (ReferenceEquals(src, _cachedIconSource) && _iconPixels != null)
                     return;
 
-                if (src.Format != PixelFormats.Bgra32 && src.Format != PixelFormats.Pbgra32)
-                    src = new FormatConvertedBitmap(src, PixelFormats.Bgra32, null, 0);
-                _pixW = src.PixelWidth;
-                _pixH = src.PixelHeight;
+                // Scale to display resolution — the icon is rendered at _iconW x _iconH in WPF,
+                // so per-pixel effects must operate at that size to be visible.
+                // Working at source resolution (e.g. 1024x1024) is wasted work since WPF
+                // downscales the result to ~64x64 anyway, averaging away subtle changes.
+                int displayW = (int)_iconW;
+                int displayH = (int)_iconH;
+                if (displayW <= 0 || displayH <= 0)
+                {
+                    displayW = 64;
+                    displayH = 64;
+                }
+
+                // Scale the source to display resolution
+                BitmapSource scaled;
+                if (src.PixelWidth != displayW || src.PixelHeight != displayH)
+                {
+                    double scaleX = (double)displayW / src.PixelWidth;
+                    double scaleY = (double)displayH / src.PixelHeight;
+                    scaled = new TransformedBitmap(src, new ScaleTransform(scaleX, scaleY));
+                }
+                else
+                {
+                    scaled = src;
+                }
+
+                if (scaled.Format != PixelFormats.Bgra32 && scaled.Format != PixelFormats.Pbgra32)
+                    scaled = new FormatConvertedBitmap(scaled, PixelFormats.Bgra32, null, 0);
+
+                _pixW = scaled.PixelWidth;
+                _pixH = scaled.PixelHeight;
                 int pixelCount = _pixW * _pixH;
                 _iconPixels = new byte[pixelCount * 4];
-                src.CopyPixels(_iconPixels, _pixW * 4, 0);
+                scaled.CopyPixels(_iconPixels, _pixW * 4, 0);
 
-                // Build luminance map with contrast stretch for content-aware masking
+                // Build luminance map for content-aware masking
+                // Gentle curve (no harsh cutoffs), then blur for smooth transitions
                 _luminanceMap = new byte[pixelCount];
                 for (int i = 0; i < pixelCount; i++)
                 {
                     int off = i * 4; // BGRA
                     double rawLum = 0.114 * _iconPixels[off] + 0.587 * _iconPixels[off + 1] + 0.299 * _iconPixels[off + 2];
-                    // Contrast stretch: push midtones apart so mask is more selective
-                    double stretched = (rawLum - 64.0) * 1.5;
-                    _luminanceMap[i] = (byte)Math.Max(0, Math.Min(255, stretched));
+                    _luminanceMap[i] = (byte)rawLum;
                 }
+                // Box blur the luminance map so mask edges are soft, not pixel-sharp
+                BlurLuminanceMap(_pixW, _pixH, radius: 2);
 
                 _cachedIconSource = icon.Source;
-                Logger.Info($"[FX] CacheIconPixels: cached {_pixW}x{_pixH} with luminance map");
+                Logger.Info($"[FX] CacheIconPixels: source {src.PixelWidth}x{src.PixelHeight} -> display {_pixW}x{_pixH} with luminance map");
             }
             catch { _iconPixels = null; _luminanceMap = null; _pixW = _pixH = 0; _cachedIconSource = null; }
         }
@@ -333,15 +381,19 @@ namespace BeautyCons.IconGlow
         {
             if (_shimmerOverlay == null) return;
 
-            // t is already a smooth sine (0→1→0), use it directly for opacity
+            // t is already a smooth sine (0→1→0), fades cleanly to 0 at cycle edges
+            // No floor — prevents the shine bar from abruptly cutting off at cycle end
             _shimmerOverlay.Opacity = _shimmerOpacity * t;
 
             // Skip rendering when nearly invisible — avoids flash on cycle restart
             if (t < 0.05)
                 return;
 
-            int w = _pixW > 0 ? _pixW : (int)_iconW;
-            int h = _pixH > 0 ? _pixH : (int)_iconH;
+            // Use display size (not source image size) so per-pixel effects are visible
+            // at the resolution that's actually rendered. Source pixels get averaged away
+            // when WPF scales a 1024x1024 image down to 64x64 display size.
+            int w = (int)_iconW;
+            int h = (int)_iconH;
             if (w <= 0 || h <= 0) return;
 
             try
@@ -396,51 +448,20 @@ namespace BeautyCons.IconGlow
             }
 
             // =============================================================
-            //  LAYER 1: Metallic luster — luminance-masked (full masking)
+            //  LAYER 1: Metallic luster — per-pixel brightness modulation
+            //  Instead of drawing a visible gradient overlay, we modify the
+            //  base icon pixels directly: brightening the "lit" side and
+            //  slightly darkening the "shadow" side based on a simulated
+            //  light position that moves with tilt. The result is the icon
+            //  itself appears to catch light, not a bar sweeping over it.
+            //  Luminance-weighted so bright areas respond more than dark.
             // =============================================================
-            float lightCenter = (float)(0.5 - dir * 0.4);
-            byte highlightA = (byte)(Math.Abs(dir) * 120 * t);
-            byte subtleDarkA = (byte)(Math.Abs(dir) * 30 * t);
-
-            var lusterColors = new SKColor[]
+            if (Math.Abs(dir) > 0.01 && t > 0.01)
             {
-                new SKColor(0, 0, 0, subtleDarkA),
-                SKColors.Transparent,
-                new SKColor(255, 255, 255, (byte)(highlightA * 0.4)),
-                new SKColor(255, 255, 255, highlightA),
-                new SKColor(255, 255, 255, (byte)(highlightA * 0.4)),
-                SKColors.Transparent,
-            };
-            float hlLeft = Math.Max(0.01f, lightCenter - 0.25f);
-            float hlRight = Math.Min(0.99f, lightCenter + 0.25f);
-            var lusterStops = new float[]
-            {
-                0.00f,
-                Math.Max(0.01f, hlLeft * 0.5f),
-                hlLeft,
-                lightCenter,
-                hlRight,
-                Math.Min(0.99f, hlRight + (1f - hlRight) * 0.5f)
-            };
-            // Ensure monotonically increasing
-            for (int i = 1; i < lusterStops.Length; i++)
-                if (lusterStops[i] <= lusterStops[i - 1])
-                    lusterStops[i] = lusterStops[i - 1] + 0.001f;
-
-            // Draw luster to effect surface, then mask and composite
-            var effCanvas = _effectSurface.Canvas;
-            effCanvas.Clear(SKColors.Transparent);
-            using (var paint = new SKPaint())
-            {
-                paint.IsAntialias = true;
-                paint.Shader = SKShader.CreateLinearGradient(
-                    new SKPoint(0, 0), new SKPoint(w, 0),
-                    lusterColors, lusterStops, SKShaderTileMode.Clamp);
-                effCanvas.DrawRect(0, 0, w, h, paint);
+                ApplyLuster(canvas, w, h, dir, t);
+                if (_logThrottle == 0) // piggyback on existing throttle
+                    Logger.Info($"[FX] ApplyLuster: dir={dir:F3} t={t:F3} strength={Math.Abs(dir)*t:F3}");
             }
-
-            // Apply luminance mask to luster and composite onto main surface
-            ApplyMaskedEffect(canvas, _effectSurface, w, h, hasLumMask, 1.0, SKBlendMode.SoftLight);
 
             // =============================================================
             //  LAYER 2: Shine bar — lightly luminance-masked (60% floor)
@@ -636,6 +657,146 @@ namespace BeautyCons.IconGlow
         {
             RemoveShineSweep(grid);
             RemoveShimmer(grid);
+        }
+
+        // ----------------------------------------------------------------
+        //  METALLIC LUSTER
+        // ----------------------------------------------------------------
+
+        /// <summary>
+        /// Modifies the base icon pixels on the main surface to simulate metallic luster.
+        /// Uses an elliptical highlight spot (not a vertical stripe) that moves with tilt.
+        /// Both horizontal AND vertical falloff create a natural light reflection shape.
+        /// </summary>
+        private void ApplyLuster(SKCanvas canvas, int w, int h, double dir, double t)
+        {
+            var pixmap = _skiaSurface.PeekPixels();
+            var ptr = pixmap.GetPixels();
+            int byteCount = w * h * 4;
+
+            byte[] pixels = new byte[byteCount];
+            System.Runtime.InteropServices.Marshal.Copy(ptr, pixels, 0, byteCount);
+
+            bool hasLum = _luminanceMap != null && _luminanceMap.Length == w * h;
+
+            // Light center X: slides with tilt direction
+            double lightCX = 0.5 - dir * 0.45;
+            // Light center Y: slightly above center for natural top-light feel,
+            // shifts a bit with tilt for a 3D look
+            double lightCY = 0.40 + Math.Abs(dir) * 0.05;
+
+            // Overall strength: proportional to |dir| and t
+            double strength = Math.Abs(dir) * t;
+            // Aggressive brightness shifts — at display resolution (~64px), subtle changes
+            // are clearly visible since each pixel occupies a real screen pixel
+            double maxBrighten = 0.80 * strength;  // up to +80% brightness
+            double maxDarken = 0.35 * strength;    // up to -35% darkness
+
+            for (int y = 0; y < h; y++)
+            {
+                // Vertical falloff: smooth cosine centered on lightCY
+                double ny = (y + 0.5) / h;
+                double dy = ny - lightCY;
+                // Wider vertical lobe (0.6) — the highlight is taller than it is wide
+                double vFalloff = Math.Cos(dy * Math.PI * 0.6);
+                vFalloff = Math.Max(0.0, Math.Min(1.0, vFalloff));
+
+                for (int x = 0; x < w; x++)
+                {
+                    int i = y * w + x;
+                    int off = i * 4; // BGRA
+
+                    byte a = pixels[off + 3];
+                    if (a == 0) continue;
+
+                    // Horizontal falloff: centered on lightCX
+                    double nx = (x + 0.5) / w;
+                    double dx = lightCX - nx;
+                    double hFalloff = Math.Cos(dx * Math.PI * 0.8);
+                    hFalloff = Math.Max(-1.0, Math.Min(1.0, hFalloff));
+
+                    // Combine: horizontal determines bright/dark side,
+                    // vertical modulates intensity (strongest at center height)
+                    double falloff = hFalloff * vFalloff;
+
+                    // Brightness shift: positive = brighten, negative = darken
+                    double shift;
+                    if (falloff > 0)
+                        shift = falloff * maxBrighten;
+                    else
+                        shift = falloff * maxDarken;
+
+                    // Luminance weighting: bright areas respond more, but floor is high
+                    // so even dark areas get a visible metallic sheen
+                    if (hasLum)
+                    {
+                        double lumWeight = 0.5 + 0.5 * (_luminanceMap[i] / 255.0);
+                        shift *= lumWeight;
+                    }
+
+                    // Apply shift to RGB channels
+                    for (int c = 0; c < 3; c++)
+                    {
+                        double val = pixels[off + c];
+                        if (shift > 0)
+                            val += (255.0 - val) * shift; // brighten toward white
+                        else
+                            val += val * shift; // darken toward black
+                        pixels[off + c] = (byte)Math.Max(0, Math.Min(255, val));
+                    }
+                }
+            }
+
+            // Write modified pixels back to the surface
+            System.Runtime.InteropServices.Marshal.Copy(pixels, 0, ptr, byteCount);
+        }
+
+        // ----------------------------------------------------------------
+        //  LUMINANCE MAP HELPERS
+        // ----------------------------------------------------------------
+
+        /// <summary>
+        /// In-place box blur of _luminanceMap to soften mask edges.
+        /// Two-pass separable blur (horizontal then vertical).
+        /// </summary>
+        private void BlurLuminanceMap(int w, int h, int radius)
+        {
+            if (_luminanceMap == null || _luminanceMap.Length != w * h) return;
+            var temp = new byte[w * h];
+
+            // Horizontal pass
+            for (int y = 0; y < h; y++)
+            {
+                for (int x = 0; x < w; x++)
+                {
+                    int sum = 0, count = 0;
+                    int x0 = Math.Max(0, x - radius);
+                    int x1 = Math.Min(w - 1, x + radius);
+                    for (int kx = x0; kx <= x1; kx++)
+                    {
+                        sum += _luminanceMap[y * w + kx];
+                        count++;
+                    }
+                    temp[y * w + x] = (byte)(sum / count);
+                }
+            }
+
+            // Vertical pass
+            for (int x = 0; x < w; x++)
+            {
+                for (int y = 0; y < h; y++)
+                {
+                    int sum = 0, count = 0;
+                    int y0 = Math.Max(0, y - radius);
+                    int y1 = Math.Min(h - 1, y + radius);
+                    for (int ky = y0; ky <= y1; ky++)
+                    {
+                        sum += temp[ky * w + x];
+                        count++;
+                    }
+                    _luminanceMap[y * w + x] = (byte)(sum / count);
+                }
+            }
         }
 
         // ----------------------------------------------------------------
