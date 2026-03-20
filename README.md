@@ -38,9 +38,6 @@ Built with the help of Claude Code and Cursor IDE
 - **Sparkles, Pulse, Color Cycle, Spin** — Glow animations
 - **Effect Shape** — Square (directional sweep) or Circular (orbiting, clipped to bounds)
 - **Theme Presets** — Quick-apply across 5 categories: Glow Only, Metallic, Ambient, Signature, Showcase
-
-![In-Game View](docs/screenshots/2.png)
-
 ---
 
 ## Installation
