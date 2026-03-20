@@ -96,7 +96,7 @@ h2 {
 <h1>BeautyCons</h1>
 <p class="subtitle">Glow effects, metallic shimmer, and transform animations for Playnite game icons</p>
 
-<!-- GLOW STYLES — SQUARE ICONS ONLY -->
+<!-- GLOW STYLES — doom2 only (the only truly square icon) -->
 <h2>Glow Styles</h2>
 <div class="showcase">
   <div class="icon-card">
@@ -104,24 +104,24 @@ h2 {
     <span class="label">Neon</span>
   </div>
   <div class="icon-card">
-    <div class="icon-wrap" style="--c1:#ffaa44;--c2:#ff6600;"><div class="glow square glow-bloom"></div><img class="square" src="icons/duke3d.png"></div>
+    <div class="icon-wrap" style="--c1:#ffaa44;--c2:#ff6600;"><div class="glow square glow-bloom"></div><img class="square" src="icons/star_renegades.png"></div>
     <span class="label">Bloom</span>
   </div>
   <div class="icon-card">
-    <div class="icon-wrap" style="--c1:#88ccff;--c2:#4488cc;"><div class="glow square glow-halo"></div><img class="square" src="icons/deus_ex_iw.png"></div>
+    <div class="icon-wrap" style="--c1:#88ccff;--c2:#4488cc;"><div class="glow square glow-halo"></div><img class="square" src="icons/doom2.png"></div>
     <span class="label">Halo</span>
   </div>
   <div class="icon-card">
-    <div class="icon-wrap" style="--c1:#88ccff;--c2:#4488cc;"><div class="glow square glow-sharp"></div><img class="square" src="icons/doom2.png"></div>
+    <div class="icon-wrap" style="--c1:#88ccff;--c2:#4488cc;"><div class="glow square glow-sharp"></div><img class="square" src="icons/star_renegades.png"></div>
     <span class="label">Sharp</span>
   </div>
   <div class="icon-card">
-    <div class="icon-wrap" style="--c1:#44ff88;--c2:#ffcc00;"><div class="glow square glow-star"></div><img class="square" src="icons/duke3d.png"></div>
+    <div class="icon-wrap" style="--c1:#44ff88;--c2:#ffcc00;"><div class="glow square glow-star"></div><img class="square" src="icons/doom2.png"></div>
     <span class="label">Star</span>
   </div>
 </div>
 
-<!-- METALLIC — SQUARE ICONS ONLY -->
+<!-- METALLIC — doom2 only -->
 <h2>Metallic Themes — Square</h2>
 <div class="showcase">
   <div class="icon-card">
@@ -136,7 +136,7 @@ h2 {
   <div class="icon-card">
     <div class="icon-wrap" style="--c1:#88ccff;--c2:#4488cc;">
       <div class="glow square glow-sharp"></div>
-      <img class="square" src="icons/deus_ex_iw.png">
+      <img class="square" src="icons/star_renegades.png">
       <div class="shimmer" style="--speed:2s;--bar1:rgba(180,200,255,0.15);--bar2:rgba(220,230,255,0.4);"></div>
       <div class="luster luster-platinum" style="--lspeed:2s;"></div>
     </div>
@@ -145,7 +145,7 @@ h2 {
   <div class="icon-card">
     <div class="icon-wrap" style="--c1:#ff4422;--c2:#ff8800;">
       <div class="glow square glow-neon"></div>
-      <img class="square" src="icons/duke3d.png">
+      <img class="square" src="icons/doom2.png">
       <div class="shimmer" style="--speed:2.5s;--delay:0.5s;--bar1:rgba(255,80,40,0.15);--bar2:rgba(255,120,60,0.4);"></div>
       <div class="luster luster-crimson" style="--lspeed:3s;"></div>
     </div>
@@ -154,7 +154,7 @@ h2 {
   <div class="icon-card pulse">
     <div class="icon-wrap" style="--c1:#cc55ff;--c2:#5599ff;">
       <div class="glow square glow-neon"></div>
-      <img class="square" src="icons/doom2.png">
+      <img class="square" src="icons/star_renegades.png">
       <div class="shimmer" style="--speed:2s;--delay:1s;--bar1:rgba(255,100,100,0.15);--bar2:rgba(100,255,100,0.3);"></div>
       <div class="luster luster-white" style="--lspeed:2s;"></div>
     </div>
@@ -162,7 +162,7 @@ h2 {
   </div>
 </div>
 
-<!-- CIRCULAR ICONS — GLOW + TRANSFORMS ONLY -->
+<!-- CIRCULAR ICONS -->
 <h2>Circular Icons</h2>
 <p class="note">Glow + transforms only — shimmer/luster effects use SkiaSharp in the actual plugin</p>
 <div class="showcase">
@@ -176,26 +176,33 @@ h2 {
   <div class="icon-card rotate3d">
     <div class="icon-wrap" style="--c1:#cc55ff;--c2:#5599ff;">
       <div class="glow circle glow-halo"></div>
-      <img class="circle" src="icons/star_renegades.png">
+      <img class="circle" src="icons/deus_ex_iw.png">
     </div>
     <span class="label">Halo + 3D</span>
   </div>
   <div class="icon-card pulse">
-    <div class="icon-wrap" style="--c1:#ff44aa;--c2:#aa22ff;">
+    <div class="icon-wrap" style="--c1:#88ccff;--c2:#4488cc;">
       <div class="glow circle glow-neon"></div>
-      <img class="circle" src="icons/dark_devotion.png">
+      <img class="circle" src="icons/duke3d.png">
     </div>
     <span class="label">Neon + Pulse</span>
   </div>
+  <div class="icon-card breathe">
+    <div class="icon-wrap" style="--c1:#ff44aa;--c2:#aa22ff;">
+      <div class="glow circle glow-sharp"></div>
+      <img class="circle" src="icons/deus_ex_iw.png">
+    </div>
+    <span class="label">Sharp + Breathe</span>
+  </div>
 </div>
 
-<!-- TRANSFORMS — SQUARE ICONS ONLY -->
+<!-- TRANSFORMS -->
 <h2>Transform Effects</h2>
 <div class="showcase">
   <div class="icon-card levitate">
     <div class="icon-wrap" style="--c1:#ff6699;--c2:#9944cc;">
       <div class="glow square glow-bloom"></div>
-      <img class="square" src="icons/doom2.png">
+      <img class="square" src="icons/star_renegades.png">
       <div class="shimmer" style="--speed:3s;"></div>
     </div>
     <span class="label">Levitation</span>
@@ -203,7 +210,7 @@ h2 {
   <div class="icon-card rotate3d">
     <div class="icon-wrap" style="--c1:#88ccff;--c2:#4488cc;">
       <div class="glow square glow-neon"></div>
-      <img class="square" src="icons/deus_ex_iw.png">
+      <img class="square" src="icons/doom2.png">
       <div class="shimmer" style="--speed:2.5s;--bar2:rgba(220,230,255,0.35);"></div>
       <div class="luster luster-platinum" style="--lspeed:3s;"></div>
     </div>
@@ -212,7 +219,7 @@ h2 {
   <div class="icon-card breathe">
     <div class="icon-wrap" style="--c1:#ff8844;--c2:#cc4400;">
       <div class="glow square glow-bloom"></div>
-      <img class="square" src="icons/duke3d.png">
+      <img class="square" src="icons/star_renegades.png">
     </div>
     <span class="label">Breathing</span>
   </div>
@@ -241,7 +248,7 @@ h2 {
   <div class="icon-card levitate">
     <div class="icon-wrap" style="--c1:#ff44aa;--c2:#4400ff;">
       <div class="glow square glow-neon"></div>
-      <img class="square" src="icons/doom2.png">
+      <img class="square" src="icons/star_renegades.png">
       <div class="shimmer" style="--speed:4s;"></div>
       <div class="luster luster-white" style="--lspeed:4s;"></div>
     </div>
@@ -250,7 +257,7 @@ h2 {
   <div class="icon-card levitate rotate3d">
     <div class="icon-wrap" style="--c1:#ff44aa;--c2:#4400ff;">
       <div class="glow circle glow-neon"></div>
-      <img class="circle" src="icons/star_renegades.png">
+      <img class="circle" src="icons/dark_devotion.png">
     </div>
     <span class="label">Huddini — Circle</span>
   </div>
