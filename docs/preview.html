@@ -32,11 +32,20 @@ h2 {
 .glow { position: absolute; inset: -8px; z-index: 1; opacity: 0.75; }
 .glow.square { border-radius: 12px; filter: blur(10px); }
 .glow.circle { border-radius: 50%; filter: blur(8px); }
-.glow-neon  { background: radial-gradient(circle, var(--c1) 0%, var(--c2) 55%, transparent 75%); }
-.glow-bloom { background: radial-gradient(circle, rgba(255,255,255,0.25) 0%, var(--c1) 30%, var(--c2) 60%, transparent 85%); filter: blur(14px); }
-.glow-halo  { background: radial-gradient(circle, transparent 35%, var(--c1) 50%, var(--c2) 65%, transparent 80%); }
-.glow-sharp { background: radial-gradient(circle, var(--c1) 0%, var(--c2) 35%, transparent 50%); filter: blur(4px); }
-.glow-star  { background: conic-gradient(from 0deg, var(--c1), transparent 12%, transparent 22%, var(--c2), transparent 37%, transparent 47%, var(--c1), transparent 62%, transparent 72%, var(--c2), transparent 88%); filter: blur(6px); animation: spin 15s linear infinite; }
+
+/* Square glows: ellipse shape */
+.glow.square.glow-neon  { background: radial-gradient(ellipse, var(--c1) 0%, var(--c2) 55%, transparent 75%); }
+.glow.square.glow-bloom { background: radial-gradient(ellipse, rgba(255,255,255,0.25) 0%, var(--c1) 30%, var(--c2) 60%, transparent 85%); filter: blur(14px); }
+.glow.square.glow-halo  { background: radial-gradient(ellipse, transparent 35%, var(--c1) 50%, var(--c2) 65%, transparent 80%); }
+.glow.square.glow-sharp { background: radial-gradient(ellipse, var(--c1) 0%, var(--c2) 35%, transparent 50%); filter: blur(4px); }
+.glow.square.glow-star  { background: conic-gradient(from 0deg, var(--c1), transparent 12%, transparent 22%, var(--c2), transparent 37%, transparent 47%, var(--c1), transparent 62%, transparent 72%, var(--c2), transparent 88%); filter: blur(6px); animation: spin 15s linear infinite; }
+
+/* Circle glows: circle shape */
+.glow.circle.glow-neon  { background: radial-gradient(circle, var(--c1) 0%, var(--c2) 50%, transparent 70%); }
+.glow.circle.glow-bloom { background: radial-gradient(circle, rgba(255,255,255,0.3) 0%, var(--c1) 25%, var(--c2) 50%, transparent 75%); filter: blur(12px); }
+.glow.circle.glow-halo  { background: radial-gradient(circle, transparent 30%, var(--c1) 45%, var(--c2) 60%, transparent 75%); }
+.glow.circle.glow-sharp { background: radial-gradient(circle, var(--c1) 0%, var(--c2) 30%, transparent 45%); filter: blur(4px); }
+.glow.circle.glow-star  { background: conic-gradient(from 0deg, var(--c1), transparent 12%, transparent 22%, var(--c2), transparent 37%, transparent 47%, var(--c1), transparent 62%, transparent 72%, var(--c2), transparent 88%); filter: blur(5px); animation: spin 15s linear infinite; }
 
 /* SHIMMER — SQUARE ONLY */
 .shimmer { position: absolute; top: 10px; left: 10px; width: 64px; height: 64px; z-index: 3; overflow: hidden; pointer-events: none; border-radius: 6px; }
