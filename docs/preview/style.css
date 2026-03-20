@@ -1,0 +1,117 @@
+/* BeautyCons Preview — Clean Stylesheet */
+
+:root {
+  --bg: #12121e;
+  --text: #ccc;
+  --dim: #666;
+  --accent: #88aaff;
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+  min-height: 100vh;
+}
+
+/* ── HEADER ── */
+header {
+  text-align: center;
+  padding: 40px 20px 30px;
+}
+header h1 { font-size: 26px; color: #fff; margin-bottom: 6px; }
+header .tagline { font-size: 13px; color: var(--dim); margin-bottom: 14px; }
+header nav { display: flex; justify-content: center; gap: 18px; font-size: 12px; }
+header nav a { color: var(--accent); text-decoration: none; }
+header nav a:hover { color: #fff; }
+
+/* ── MAIN ── */
+main { max-width: 850px; margin: 0 auto; padding: 0 20px 60px; }
+
+section { margin-bottom: 50px; }
+section h2 {
+  font-size: 13px; color: var(--dim);
+  text-transform: uppercase; letter-spacing: 2px;
+  text-align: center; margin-bottom: 20px;
+  border-bottom: 1px solid #222; padding-bottom: 8px;
+}
+section .note {
+  text-align: center; font-size: 10px;
+  color: #555; font-style: italic; margin: -12px 0 16px;
+}
+
+/* ── GRID ── */
+.grid {
+  display: flex; flex-wrap: wrap;
+  justify-content: center; gap: 40px;
+}
+
+/* ── CARD ── */
+.card {
+  display: flex; flex-direction: column;
+  align-items: center; gap: 8px;
+}
+.card > span {
+  font-size: 10px; color: var(--dim);
+  text-transform: uppercase; letter-spacing: 1px;
+}
+
+/* ── ICON (the visual container) ── */
+.icon {
+  position: relative;
+  width: 72px; height: 72px;
+}
+
+.icon img {
+  width: 56px; height: 56px;
+  position: absolute; top: 8px; left: 8px;
+  z-index: 2; border-radius: 6px;
+  display: block;
+}
+.icon.circle img { border-radius: 50%; }
+
+/* ── GLOW (injected by JS) ── */
+.icon .glow-el {
+  position: absolute;
+  inset: -5px; z-index: 1;
+  border-radius: 8px;
+  pointer-events: none;
+}
+.icon.circle .glow-el { border-radius: 50%; }
+
+/* ── SHIMMER BAR (injected by JS) ── */
+.icon .shimmer-el {
+  position: absolute;
+  top: 8px; left: 8px;
+  width: 56px; height: 56px;
+  overflow: hidden; z-index: 3;
+  border-radius: 6px;
+  pointer-events: none;
+}
+.icon .shimmer-el .bar {
+  position: absolute;
+  top: -15px; left: -30px;
+  width: 24px; height: 90px;
+  transform: rotate(20deg);
+  pointer-events: none;
+}
+
+/* ── LUSTER (injected by JS) ── */
+.icon .luster-el {
+  position: absolute;
+  top: 8px; left: 8px;
+  width: 56px; height: 56px;
+  z-index: 4; border-radius: 6px;
+  pointer-events: none;
+  mix-blend-mode: overlay;
+}
+
+/* ── FOOTER ── */
+footer {
+  text-align: center; padding: 30px;
+  font-size: 11px; color: #444;
+}
+footer a { color: var(--dim); text-decoration: none; }
+footer a:hover { color: #fff; }
