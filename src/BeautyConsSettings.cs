@@ -19,20 +19,23 @@ namespace BeautyCons
         private ColorPreset colorPreset = ColorPreset.Auto;
         private string customColor1 = "#6495ED";
         private string customColor2 = "#B464FF";
+        private EffectShape effectShape = EffectShape.Square;
         private bool enableShineSweep = false;
         private double shineSweepSpeed = 3.0;
+        private double shineSweepPauseMin = 1.0;
+        private double shineSweepPauseMax = 4.0;
         private bool enableTilt = false;
         private double tiltSpeed = 2.5;
         private double tiltPauseMin = 1.0;
         private double tiltPauseMax = 4.0;
         private bool enableShimmer = false;
-        private double shimmerSpeed = 2.5;
+        private double shimmerSpeed = 1.5;
         private double shimmerOpacity = 0.85;
         private double shimmerPauseMin = 1.0;
         private double shimmerPauseMax = 4.0;
         private ShineStyle shimmerShineStyle = ShineStyle.White;
         private bool enableColorShimmer = false;
-        private double colorShimmerSpeed = 2.5;
+        private double colorShimmerSpeed = 1.5;
         private double colorShimmerOpacity = 0.65;
         private bool enablePulse = false;
         private double pulseSpeed = 3.0;
@@ -42,6 +45,19 @@ namespace BeautyCons
         private bool enableSparkles = false;
         private int sparkleCount = 12;
         private double sparkleSpeed = 1.0;
+        private bool enableHoverEffect = false;
+        private bool enableBreathingScale = false;
+        private bool enableLevitation = false;
+        private double levitationSpeed = 4.0;
+        private double levitationAmount = 2.5;
+        private bool enable3DRotation = false;
+        private double rotationSpeed = 6.0;
+        private double rotationAmount = 3.0;
+        private bool enableGlint = false;
+        private double glintIntervalMin = 4.0;
+        private double glintIntervalMax = 10.0;
+        private bool enableShadowDrift = false;
+        private bool enableParallax = false;
 
         public bool EnablePlugin
         {
@@ -109,6 +125,12 @@ namespace BeautyCons
             set { customColor2 = value; OnPropertyChanged(); }
         }
 
+        public EffectShape EffectShape
+        {
+            get => effectShape;
+            set { effectShape = value; OnPropertyChanged(); }
+        }
+
         public bool EnableShineSweep
         {
             get => enableShineSweep;
@@ -119,6 +141,18 @@ namespace BeautyCons
         {
             get => shineSweepSpeed;
             set { shineSweepSpeed = value; OnPropertyChanged(); }
+        }
+
+        public double ShineSweepPauseMin
+        {
+            get => shineSweepPauseMin;
+            set { shineSweepPauseMin = value; OnPropertyChanged(); }
+        }
+
+        public double ShineSweepPauseMax
+        {
+            get => shineSweepPauseMax;
+            set { shineSweepPauseMax = value; OnPropertyChanged(); }
         }
 
         public bool EnableTilt
@@ -245,6 +279,84 @@ namespace BeautyCons
         {
             get => sparkleSpeed;
             set { sparkleSpeed = value; OnPropertyChanged(); }
+        }
+
+        public bool EnableHoverEffect
+        {
+            get => enableHoverEffect;
+            set { enableHoverEffect = value; OnPropertyChanged(); }
+        }
+
+        public bool EnableBreathingScale
+        {
+            get => enableBreathingScale;
+            set { enableBreathingScale = value; OnPropertyChanged(); }
+        }
+
+        public bool EnableLevitation
+        {
+            get => enableLevitation;
+            set { enableLevitation = value; OnPropertyChanged(); }
+        }
+
+        public double LevitationSpeed
+        {
+            get => levitationSpeed;
+            set { levitationSpeed = value; OnPropertyChanged(); }
+        }
+
+        public double LevitationAmount
+        {
+            get => levitationAmount;
+            set { levitationAmount = value; OnPropertyChanged(); }
+        }
+
+        public bool Enable3DRotation
+        {
+            get => enable3DRotation;
+            set { enable3DRotation = value; OnPropertyChanged(); }
+        }
+
+        public double RotationSpeed
+        {
+            get => rotationSpeed;
+            set { rotationSpeed = value; OnPropertyChanged(); }
+        }
+
+        public double RotationAmount
+        {
+            get => rotationAmount;
+            set { rotationAmount = value; OnPropertyChanged(); }
+        }
+
+        public bool EnableGlint
+        {
+            get => enableGlint;
+            set { enableGlint = value; OnPropertyChanged(); }
+        }
+
+        public double GlintIntervalMin
+        {
+            get => glintIntervalMin;
+            set { glintIntervalMin = value; OnPropertyChanged(); }
+        }
+
+        public double GlintIntervalMax
+        {
+            get => glintIntervalMax;
+            set { glintIntervalMax = value; OnPropertyChanged(); }
+        }
+
+        public bool EnableShadowDrift
+        {
+            get => enableShadowDrift;
+            set { enableShadowDrift = value; OnPropertyChanged(); }
+        }
+
+        public bool EnableParallax
+        {
+            get => enableParallax;
+            set { enableParallax = value; OnPropertyChanged(); }
         }
     }
 }

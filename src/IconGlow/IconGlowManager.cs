@@ -69,6 +69,10 @@ namespace BeautyCons.IconGlow
 
             _settingsViewModel.PropertyChanged += OnViewModelPropertyChanged;
             SubscribeToSettings(Settings);
+
+            // Reset hover state when window loses focus (prevents stuck hover on Alt-Tab)
+            if (Application.Current != null)
+                Application.Current.Deactivated += OnAppDeactivated;
         }
 
         private void SubscribeToSettings(BeautyConsSettings settings)
@@ -125,8 +129,11 @@ namespace BeautyCons.IconGlow
                     }
                     break;
 
+                case nameof(BeautyConsSettings.EffectShape):
                 case nameof(BeautyConsSettings.EnableShineSweep):
                 case nameof(BeautyConsSettings.ShineSweepSpeed):
+                case nameof(BeautyConsSettings.ShineSweepPauseMin):
+                case nameof(BeautyConsSettings.ShineSweepPauseMax):
                 case nameof(BeautyConsSettings.EnableTilt):
                 case nameof(BeautyConsSettings.EnableShimmer):
                 case nameof(BeautyConsSettings.ShimmerSpeed):
@@ -137,6 +144,19 @@ namespace BeautyCons.IconGlow
                 case nameof(BeautyConsSettings.EnableColorShimmer):
                 case nameof(BeautyConsSettings.ColorShimmerSpeed):
                 case nameof(BeautyConsSettings.ColorShimmerOpacity):
+                case nameof(BeautyConsSettings.EnableHoverEffect):
+                case nameof(BeautyConsSettings.EnableBreathingScale):
+                case nameof(BeautyConsSettings.EnableLevitation):
+                case nameof(BeautyConsSettings.LevitationSpeed):
+                case nameof(BeautyConsSettings.LevitationAmount):
+                case nameof(BeautyConsSettings.Enable3DRotation):
+                case nameof(BeautyConsSettings.RotationSpeed):
+                case nameof(BeautyConsSettings.RotationAmount):
+                case nameof(BeautyConsSettings.EnableGlint):
+                case nameof(BeautyConsSettings.GlintIntervalMin):
+                case nameof(BeautyConsSettings.GlintIntervalMax):
+                case nameof(BeautyConsSettings.EnableShadowDrift):
+                case nameof(BeautyConsSettings.EnableParallax):
                     if (_currentIcon != null && _currentWrapperGrid != null)
                     {
                         Application.Current?.Dispatcher?.BeginInvoke(
@@ -460,6 +480,11 @@ namespace BeautyCons.IconGlow
                 _currentGlowImage.Height = icon.ActualHeight + extend * 2;
                 _currentGlowImage.Margin = new Thickness(-extend);
                 ApplyIconEffects();
+                // Re-attach/detach hover handlers if settings changed
+                if (Settings.EnableHoverEffect && !_iconEffects.IsHoverEventsAttached)
+                    AttachHoverHandlers(_currentWrapperGrid);
+                else if (!Settings.EnableHoverEffect && _iconEffects.IsHoverEventsAttached)
+                    DetachHoverHandlers(_currentWrapperGrid);
                 // Only fade in if glow isn't already visible (avoids blink on color cycle re-render)
                 if (_currentGlowImage.Opacity < 0.01)
                     StartFadeIn();
@@ -503,12 +528,16 @@ namespace BeautyCons.IconGlow
             _currentWrapperGrid = wrapper;
             _currentGlowImage = glowImage;
 
+            AttachHoverHandlers(wrapper);
             ApplyIconEffects();
             StartFadeIn();
         }
 
         private void RemoveGlowVisuals()
         {
+            // Detach hover handlers before teardown
+            DetachHoverHandlers(_currentWrapperGrid);
+
             // Clean up icon effects before unwrapping
             if (_currentWrapperGrid != null)
                 _iconEffects.RemoveAll(_currentWrapperGrid);
@@ -550,7 +579,12 @@ namespace BeautyCons.IconGlow
                 Settings.EnableColorCycle ||
                 Settings.EnableShineSweep ||
                 Settings.EnableShimmer ||
-                Settings.EnableColorShimmer);
+                Settings.EnableColorShimmer ||
+                Settings.EnableHoverEffect ||
+                Settings.EnableBreathingScale ||
+                Settings.EnableLevitation ||
+                Settings.Enable3DRotation ||
+                Settings.EnableGlint);
 
             if (needsAnimation)
             {
@@ -604,9 +638,11 @@ namespace BeautyCons.IconGlow
         {
             if (_currentIcon == null || _currentWrapperGrid == null) return;
 
+            var shape = Settings.EffectShape;
+
             if (Settings.EnableShineSweep)
             {
-                _iconEffects.ApplyShineSweep(_currentWrapperGrid, _currentIcon);
+                _iconEffects.ApplyShineSweep(_currentWrapperGrid, _currentIcon, shape);
                 StartAnimTimer();
             }
             else
@@ -619,18 +655,38 @@ namespace BeautyCons.IconGlow
             bool tilt = Settings.EnableTilt;
             if (Settings.EnableColorShimmer)
             {
-                _iconEffects.ApplyShimmer(_currentWrapperGrid, _currentIcon, Settings.ColorShimmerOpacity, _activeColor1, _activeColor2, ShineStyle.IconColors, tilt, now);
+                _iconEffects.ApplyShimmer(_currentWrapperGrid, _currentIcon, Settings.ColorShimmerOpacity, _activeColor1, _activeColor2, ShineStyle.IconColors, tilt, now, shape);
                 StartAnimTimer();
             }
             else if (Settings.EnableShimmer)
             {
-                _iconEffects.ApplyShimmer(_currentWrapperGrid, _currentIcon, Settings.ShimmerOpacity, _activeColor1, _activeColor2, Settings.ShimmerShineStyle, tilt, now);
+                _iconEffects.ApplyShimmer(_currentWrapperGrid, _currentIcon, Settings.ShimmerOpacity, _activeColor1, _activeColor2, Settings.ShimmerShineStyle, tilt, now, shape);
                 StartAnimTimer();
             }
             else
             {
                 _iconEffects.RemoveShimmer(_currentWrapperGrid);
             }
+
+            // Ensure transforms exist for hover/breathing/levitation/3D even without shimmer
+            if ((Settings.EnableHoverEffect || Settings.EnableBreathingScale
+                || Settings.EnableLevitation || Settings.Enable3DRotation)
+                && _currentWrapperGrid.RenderTransform == null)
+            {
+                _iconEffects.EnsureTransforms(_currentWrapperGrid, _currentIcon);
+            }
+
+            // Force hover off if setting was disabled mid-hover
+            if (!Settings.EnableHoverEffect)
+                _iconEffects.SetHoverState(0, 0, false);
+
+            // Pass effect settings to IconEffects
+            _iconEffects.SetBreathingEnabled(Settings.EnableBreathingScale);
+            _iconEffects.SetLevitation(Settings.EnableLevitation, Settings.LevitationSpeed, Settings.LevitationAmount);
+            _iconEffects.Set3DRotation(Settings.Enable3DRotation, Settings.RotationSpeed, Settings.RotationAmount);
+            _iconEffects.SetGlint(Settings.EnableGlint, Settings.GlintIntervalMin, Settings.GlintIntervalMax);
+            _iconEffects.SetShadowDrift(Settings.EnableShadowDrift);
+            _iconEffects.SetParallax(Settings.EnableParallax);
         }
 
         private void RemoveSparkleOverlay()
@@ -642,6 +698,61 @@ namespace BeautyCons.IconGlow
                 _sparkleOverlay.Clear();
                 _sparkleOverlay = null;
             }
+        }
+
+        // ----------------------------------------------------------------
+        //  HOVER EVENT HANDLERS
+        // ----------------------------------------------------------------
+
+        private void AttachHoverHandlers(Grid wrapper)
+        {
+            if (wrapper == null || !Settings.EnableHoverEffect) return;
+            // Do not set e.Handled — Playnite's selection/context menu must pass through
+            wrapper.MouseEnter += OnWrapperMouseEnter;
+            wrapper.MouseLeave += OnWrapperMouseLeave;
+            wrapper.MouseMove += OnWrapperMouseMove;
+            _iconEffects.MarkHoverEventsAttached(true);
+        }
+
+        private void DetachHoverHandlers(Grid wrapper)
+        {
+            if (wrapper == null) return;
+            wrapper.MouseEnter -= OnWrapperMouseEnter;
+            wrapper.MouseLeave -= OnWrapperMouseLeave;
+            wrapper.MouseMove -= OnWrapperMouseMove;
+            _iconEffects.MarkHoverEventsAttached(false);
+        }
+
+        private void OnWrapperMouseEnter(object sender, System.Windows.Input.MouseEventArgs e)
+        {
+            if (!Settings.EnableHoverEffect) return;
+            var grid = sender as Grid;
+            if (grid == null) return;
+            var pos = e.GetPosition(grid);
+            double mx = Math.Max(-1.0, Math.Min(1.0, (pos.X / grid.ActualWidth) * 2.0 - 1.0));
+            double my = Math.Max(-1.0, Math.Min(1.0, (pos.Y / grid.ActualHeight) * 2.0 - 1.0));
+            _iconEffects.SetHoverState(mx, my, true);
+        }
+
+        private void OnWrapperMouseLeave(object sender, System.Windows.Input.MouseEventArgs e)
+        {
+            _iconEffects.SetHoverState(0, 0, false);
+        }
+
+        private void OnWrapperMouseMove(object sender, System.Windows.Input.MouseEventArgs e)
+        {
+            if (!Settings.EnableHoverEffect) return;
+            var grid = sender as Grid;
+            if (grid == null) return;
+            var pos = e.GetPosition(grid);
+            double mx = Math.Max(-1.0, Math.Min(1.0, (pos.X / grid.ActualWidth) * 2.0 - 1.0));
+            double my = Math.Max(-1.0, Math.Min(1.0, (pos.Y / grid.ActualHeight) * 2.0 - 1.0));
+            _iconEffects.SetHoverState(mx, my, true);
+        }
+
+        private void OnAppDeactivated(object sender, EventArgs e)
+        {
+            _iconEffects.SetHoverState(0, 0, false);
         }
 
         private void StartAnimTimer()
@@ -726,7 +837,7 @@ namespace BeautyCons.IconGlow
             // Shine sweep
             if (Settings.EnableShineSweep)
             {
-                _iconEffects.UpdateShineSweep(Settings.ShineSweepSpeed);
+                _iconEffects.UpdateShineSweep(Settings.ShineSweepSpeed, elapsed, Settings.ShineSweepPauseMin, Settings.ShineSweepPauseMax);
             }
 
             // Shimmer + tilt (unified cycle — color shimmer takes priority)
@@ -737,6 +848,34 @@ namespace BeautyCons.IconGlow
             else if (Settings.EnableShimmer)
             {
                 _iconEffects.UpdateShimmer(Settings.ShimmerSpeed, elapsed, Settings.ShimmerPauseMin, Settings.ShimmerPauseMax);
+            }
+            else if (Settings.EnableHoverEffect || Settings.EnableBreathingScale
+                || Settings.EnableLevitation || Settings.Enable3DRotation || Settings.EnableGlint)
+            {
+                // Breathing scale + hover + levitation + 3D when shimmer is off
+                _iconEffects.UpdateHoverAndBreathing();
+            }
+
+            // Shadow drift: shift the glow image opposite to the current tilt
+            if (Settings.EnableShadowDrift && _currentGlowImage != null && _currentIcon != null)
+            {
+                double tiltAngle = _iconEffects.GetCurrentTiltX();
+                double driftX = -tiltAngle * 0.6; // opposite to tilt direction
+                double driftY = Math.Abs(tiltAngle) * 0.3; // slight down when tilted
+                double extend = (_currentGlowImage.Width - _currentIcon.ActualWidth) / 2;
+                _currentGlowImage.Margin = new Thickness(-extend + driftX, -extend + driftY,
+                    -extend - driftX, -extend - driftY);
+            }
+
+            // Parallax: shift glow opposite to tilt for depth
+            if (Settings.EnableParallax && !Settings.EnableShadowDrift
+                && _currentGlowImage != null && _currentIcon != null)
+            {
+                double tiltAngle = _iconEffects.GetCurrentTiltX();
+                double parallaxX = -tiltAngle * 0.4;
+                double extend = (_currentGlowImage.Width - _currentIcon.ActualWidth) / 2;
+                _currentGlowImage.Margin = new Thickness(-extend + parallaxX, -extend,
+                    -extend - parallaxX, -extend);
             }
         }
 
@@ -755,6 +894,9 @@ namespace BeautyCons.IconGlow
             if (_subscribedSettings != null)
                 _subscribedSettings.PropertyChanged -= OnSettingsPropertyChanged;
             _subscribedSettings = null;
+
+            if (Application.Current != null)
+                Application.Current.Deactivated -= OnAppDeactivated;
 
             RemoveGlow();
             _colorExtractor.ClearCache();

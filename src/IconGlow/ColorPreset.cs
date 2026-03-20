@@ -12,6 +12,12 @@ namespace BeautyCons.IconGlow
         IconColors
     }
 
+    public enum EffectShape
+    {
+        Square,
+        Circular
+    }
+
     public enum ColorPreset
     {
         Auto,

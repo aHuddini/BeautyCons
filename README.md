@@ -1,80 +1,107 @@
-# BeautyCons
+# BeautyCons Playnite Extension
 
-A Playnite extension that adds beautiful, customizable glow effects around game icons in the detail view.
+![Version](https://img.shields.io/badge/version-1.0.0-blue) ![License](https://img.shields.io/badge/license-MIT-green) ![Playnite SDK](https://img.shields.io/badge/Playnite%20SDK-6.15.0-purple) ![Platform](https://img.shields.io/badge/platform-Windows%20x64-lightgrey)
+
+<p align="center">
+  <img src="docs/screenshots/BeautyConsLOGO.png" alt="BeautyCons" width="150">
+</p>
+
+<p align="center">
+  <a href="https://ko-fi.com/Z8Z11SG2IK">
+    <img src="https://ko-fi.com/img/githubbutton_sm.svg" alt="ko-fi">
+  </a>
+</p>
+
+A Playnite extension that adds glow effects, metallic shimmer, and transform animations to game icons in the detail view.
+
+Built with the help of Claude Code and Cursor IDE
+
+---
+
+## Demo
+
+![BeautyCons Preview](docs/screenshots/demo.png)
+
+---
 
 ## Features
 
-### Glow Styles
+### Glow & Color
 
-| Style | Description |
-|-------|-------------|
-| **Neon** | Bold multi-layer additive glow with color gradient separation |
-| **Soft** | Wide dreamy single-layer glow |
-| **Sharp** | Tight bright edge highlight |
-| **Bloom** | Overexposed look — bright center with wide soft falloff |
-| **Halo** | Soft ring around the icon |
-| **Diamond** | Diamond-shaped glow emanating from the icon |
-| **Cross** | Cross/plus-shaped glow |
-| **Star** | 4-pointed star burst |
+8 glow styles with 13+ color presets or auto-extracted icon colors.
 
-### Color Presets
+![Color Presets](docs/screenshots/3.png)
 
-Choose from 13 built-in color presets, or let BeautyCons automatically extract colors from each game's icon.
+### Icon Effects
 
-**Built-in presets:** Hot Pink, Ocean, Sunset, Neon Green, Purple Haze, Ice, Fire, Gold, Vampire, Mint, Synthwave, Monochrome
+![Signature Preset](docs/screenshots/1.png)
 
-**Auto mode:** Analyzes the game icon's pixels and picks the two most vivid, contrasting colors for a glow that matches each game.
+- **Shimmer** — Diagonal shine bar or orbiting highlight spot with style-specific tinting
+- **Metallic Luster** — Per-pixel directional lighting (Gold, Platinum, Crimson, Holographic, Icon Colors)
+- **Levitation** — Slow continuous float
+- **3D Rotation** — Fake perspective turntable
+- **Tilt, Hover, Breathing Scale** — Subtle motion effects
+- **Shadow Drift / Parallax** — Glow shifts opposite to tilt for depth
+- **Sparkles, Pulse, Color Cycle, Spin** — Glow animations
 
-**Custom mode:** Define your own colors with hex values.
+![Metallic Themes](docs/screenshots/4.png)
 
-### Animations
+### Effect Shape
 
-All animations are optional and can be combined:
+- **Square** — Directional sweep for standard icons
+- **Circular** — Orbiting effects clipped to circular bounds
 
-- **Spin Rotation** — Glow rotates smoothly around the icon
-- **Pulse** — Opacity breathes in and out on a sine wave
-- **Color Cycle** — Hue shifts gradually over time
-- **Sparkles** — Small bright dots appear, drift, and fade around the glow
+### Theme Presets
 
-### Performance
+Quick-apply configurations across 5 categories: Glow Only, Metallic, Ambient, Signature, and Showcase.
 
-- Glow rendering happens on a background thread via SkiaSharp — never blocks the UI
-- Two-tier cache (memory + disk) means revisited games display their glow instantly
-- Smooth transitions between games with phase-aligned animation restart
+![In-Game View](docs/screenshots/2.png)
+
+---
 
 ## Installation
 
-1. Download the latest `.pext` file from [Releases](https://github.com/aHuddini/BeautyCons/releases)
-2. Open Playnite
-3. Go to **Add-ons → Extensions**
-4. Click **Install from file** and select the `.pext` file
-5. Restart Playnite
+1. Download the `.pext` from [Releases](https://github.com/aHuddini/BeautyCons/releases)
+2. In Playnite: **Add-ons → Install from file**
+3. Restart Playnite
+
+---
 
 ## Settings
 
-Open Playnite Settings → BeautyCons → **Icon Glow** tab.
+Settings → BeautyCons. Tabs: **General**, **Icon Glow**, **Presets**, **About**, **Preview**. All changes apply immediately.
 
-All settings take effect immediately — no restart required.
+---
+
+## Known Limitations
+
+- Effects render at display resolution (~48px), not source resolution
+- Visual tree injection depends on Playnite theme structure — some themes may not be compatible
+- Circular shape is a manual setting — auto-detection isn't possible
+- Luster uses CPU-based SkiaSharp rendering
+
+---
 
 ## Requirements
 
 - Playnite 10+ (SDK 6.15.0)
-- Desktop mode only (not Fullscreen mode)
+- Desktop mode only
 - Windows x64
 
-## Building from Source
+---
+
+## Building
 
 ```bash
-dotnet restore src/BeautyCons.csproj
 dotnet build src/BeautyCons.csproj -c Release
+.\scripts\package_extension.ps1
 ```
 
-Package for distribution:
-```powershell
-.\scripts\package_extension.ps1 -Configuration Release
-```
+---
 
-Output: `pext/BeautyCons.eb7017af-c0ee-4416-aec5-27d516530af7_1_0_0.pext`
+## Credits
+
+Built with [SkiaSharp](https://github.com/mono/SkiaSharp) and [Playnite SDK](https://playnite.link/). Luster techniques inspired by [pokemon-cards-css](https://github.com/simeydotme/pokemon-cards-css).
 
 ## License
 

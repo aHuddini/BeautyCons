@@ -164,6 +164,16 @@
 
                     <TextBlock Text="Icon Effects" FontSize="16" FontWeight="Bold" Margin="0,20,0,10"/>
 
+                    <TextBlock Text="Effect Shape" FontWeight="SemiBold" Margin="0,5,0,5"/>
+                    <ComboBox SelectedValue="{Binding Settings.EffectShape}"
+                              SelectedValuePath="Tag"
+                              Width="220" HorizontalAlignment="Left" Margin="0,0,0,3">
+                        <ComboBoxItem Content="Square — Directional sweep effects" Tag="{x:Static glow:EffectShape.Square}"/>
+                        <ComboBoxItem Content="Circular — Orbiting highlight effects" Tag="{x:Static glow:EffectShape.Circular}"/>
+                    </ComboBox>
+                    <TextBlock Text="Square works best with full-size square icons. Circular works better with round, small, or transparent icons."
+                               FontSize="11" Foreground="Gray" TextWrapping="Wrap" Margin="20,0,0,8"/>
+
                     <CheckBox Content="Enable Shine Sweep"
                               IsChecked="{Binding Settings.EnableShineSweep}"
                               Margin="0,15,0,5"/>
@@ -177,6 +187,21 @@
                                        Text="{Binding Settings.ShineSweepSpeed, StringFormat={}{0:F1}}"/>
                             <Slider Minimum="1.0" Maximum="8.0" TickFrequency="0.5" IsSnapToTickEnabled="True"
                                     Value="{Binding Settings.ShineSweepSpeed}"/>
+                        </DockPanel>
+                        <TextBlock Text="Pause Between Sweeps (seconds)" FontWeight="SemiBold" Margin="0,5,0,5"/>
+                        <DockPanel Margin="0,0,0,5">
+                            <TextBlock DockPanel.Dock="Left" Text="Min:" Width="30" VerticalAlignment="Center"/>
+                            <TextBlock DockPanel.Dock="Right" Width="30" TextAlignment="Center"
+                                       Text="{Binding Settings.ShineSweepPauseMin, StringFormat={}{0:F1}}"/>
+                            <Slider Minimum="0.0" Maximum="8.0" TickFrequency="0.5" IsSnapToTickEnabled="True"
+                                    Value="{Binding Settings.ShineSweepPauseMin}"/>
+                        </DockPanel>
+                        <DockPanel Margin="0,0,0,5">
+                            <TextBlock DockPanel.Dock="Left" Text="Max:" Width="30" VerticalAlignment="Center"/>
+                            <TextBlock DockPanel.Dock="Right" Width="30" TextAlignment="Center"
+                                       Text="{Binding Settings.ShineSweepPauseMax, StringFormat={}{0:F1}}"/>
+                            <Slider Minimum="0.0" Maximum="12.0" TickFrequency="0.5" IsSnapToTickEnabled="True"
+                                    Value="{Binding Settings.ShineSweepPauseMax}"/>
                         </DockPanel>
                     </StackPanel>
 
@@ -259,6 +284,80 @@
                         </DockPanel>
                     </StackPanel>
 
+                    <CheckBox Content="Enable Hover Effect"
+                              IsChecked="{Binding Settings.EnableHoverEffect}"
+                              Margin="0,15,0,5"/>
+                    <TextBlock Text="Icon levitates and tilts toward cursor on mouse hover, with mouse-reactive metallic luster"
+                               FontSize="11" Foreground="Gray" TextWrapping="Wrap" Margin="20,0,0,5"/>
+
+                    <CheckBox Content="Enable Breathing Scale"
+                              IsChecked="{Binding Settings.EnableBreathingScale}"
+                              Margin="0,15,0,5"/>
+                    <TextBlock Text="Gentle continuous scale pulse that makes the icon feel alive, even during shimmer pauses"
+                               FontSize="11" Foreground="Gray" TextWrapping="Wrap" Margin="20,0,0,5"/>
+
+                    <!-- Levitation -->
+                    <CheckBox Content="Enable Levitation"
+                              IsChecked="{Binding Settings.EnableLevitation}"
+                              Margin="0,15,0,5"/>
+                    <TextBlock Text="Icon slowly floats up and down continuously"
+                               FontSize="11" Foreground="Gray" TextWrapping="Wrap" Margin="20,0,0,5"/>
+                    <StackPanel Margin="20,5,0,0">
+                        <StackPanel Orientation="Horizontal" Margin="0,3">
+                            <TextBlock Text="Float Speed:" Width="110" VerticalAlignment="Center"/>
+                            <TextBlock Width="35" TextAlignment="Center" VerticalAlignment="Center"
+                                       Text="{Binding Settings.LevitationSpeed, StringFormat={}{0:F1}s}"/>
+                            <Slider Minimum="2.0" Maximum="10.0" Width="180"
+                                    Value="{Binding Settings.LevitationSpeed}"/>
+                        </StackPanel>
+                        <StackPanel Orientation="Horizontal" Margin="0,3">
+                            <TextBlock Text="Float Amount:" Width="110" VerticalAlignment="Center"/>
+                            <TextBlock Width="35" TextAlignment="Center" VerticalAlignment="Center"
+                                       Text="{Binding Settings.LevitationAmount, StringFormat={}{0:F1}px}"/>
+                            <Slider Minimum="0.5" Maximum="6.0" Width="180"
+                                    Value="{Binding Settings.LevitationAmount}"/>
+                        </StackPanel>
+                    </StackPanel>
+
+                    <!-- 3D Rotation -->
+                    <CheckBox Content="Enable 3D Rotation"
+                              IsChecked="{Binding Settings.Enable3DRotation}"
+                              Margin="0,15,0,5"/>
+                    <TextBlock Text="Slow perspective rotation — icon appears to turn on a turntable"
+                               FontSize="11" Foreground="Gray" TextWrapping="Wrap" Margin="20,0,0,5"/>
+                    <StackPanel Margin="20,5,0,0">
+                        <StackPanel Orientation="Horizontal" Margin="0,3">
+                            <TextBlock Text="Rotation Speed:" Width="110" VerticalAlignment="Center"/>
+                            <TextBlock Width="35" TextAlignment="Center" VerticalAlignment="Center"
+                                       Text="{Binding Settings.RotationSpeed, StringFormat={}{0:F1}s}"/>
+                            <Slider Minimum="3.0" Maximum="15.0" Width="180"
+                                    Value="{Binding Settings.RotationSpeed}"/>
+                        </StackPanel>
+                        <StackPanel Orientation="Horizontal" Margin="0,3">
+                            <TextBlock Text="Rotation Amount:" Width="110" VerticalAlignment="Center"/>
+                            <TextBlock Width="35" TextAlignment="Center" VerticalAlignment="Center"
+                                       Text="{Binding Settings.RotationAmount, StringFormat={}{0:F1}°}"/>
+                            <Slider Minimum="1.0" Maximum="8.0" Width="180"
+                                    Value="{Binding Settings.RotationAmount}"/>
+                        </StackPanel>
+                    </StackPanel>
+
+                    <!-- Glint (hidden — effect needs visual redesign) -->
+
+                    <!-- Shadow Drift -->
+                    <CheckBox Content="Enable Shadow Drift"
+                              IsChecked="{Binding Settings.EnableShadowDrift}"
+                              Margin="0,15,0,5"/>
+                    <TextBlock Text="Subtle drop shadow shifts opposite to tilt for added depth"
+                               FontSize="11" Foreground="Gray" TextWrapping="Wrap" Margin="20,0,0,5"/>
+
+                    <!-- Parallax -->
+                    <CheckBox Content="Enable Parallax"
+                              IsChecked="{Binding Settings.EnableParallax}"
+                              Margin="0,15,0,5"/>
+                    <TextBlock Text="Glow layer shifts slightly opposite to tilt, creating depth between glow and icon"
+                               FontSize="11" Foreground="Gray" TextWrapping="Wrap" Margin="20,0,0,5"/>
+
                     <TextBlock Text="Color Preset" FontWeight="SemiBold" Margin="0,15,0,5"/>
                     <ComboBox SelectedValue="{Binding Settings.ColorPreset}"
                               SelectedValuePath="Tag"
@@ -306,6 +405,111 @@
                 </StackPanel>
             </ScrollViewer>
         </TabItem>
+        <!-- Theme Presets Tab -->
+        <TabItem Header="Presets">
+            <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
+                <StackPanel Margin="20">
+                    <TextBlock Text="Theme Presets" FontSize="18" FontWeight="Bold" Margin="0,0,0,5"/>
+                    <TextBlock Text="Quick-apply effect combinations. Use as a starting point, then customize in the Icon Glow tab."
+                               FontSize="11" Foreground="Gray" TextWrapping="Wrap" Margin="0,0,0,15"/>
+
+                    <!-- ── GLOW ONLY (no shimmer/shine) ── -->
+                    <TextBlock Text="Glow Only" FontWeight="SemiBold" FontSize="13" Margin="0,5,0,3"/>
+                    <TextBlock Text="Clean glow effects without shimmer or shine — great starting points."
+                               FontSize="10" Foreground="#888" Margin="0,0,0,8"/>
+
+                    <WrapPanel Margin="0,0,0,10">
+                        <Button Content="Cozy Glow" Click="PresetCozyGlow_Click" Padding="12,6" Margin="0,0,8,8" FontSize="11"/>
+                        <Button Content="Neon Pulse" Click="PresetNeonPulseClean_Click" Padding="12,6" Margin="0,0,8,8" FontSize="11"/>
+                        <Button Content="Subtle Gleam" Click="PresetSubtleGleamClean_Click" Padding="12,6" Margin="0,0,8,8" FontSize="11"/>
+                    </WrapPanel>
+
+                    <!-- ── WITH SHIMMER & SHINE ── -->
+                    <Border BorderThickness="0,1,0,0" BorderBrush="#333" Margin="0,10,0,12"/>
+
+                    <TextBlock Text="Metallic Themes" FontWeight="SemiBold" FontSize="13" Margin="0,0,0,3"/>
+                    <TextBlock Text="Shimmer bars and metallic luster for a foil / chrome look."
+                               FontSize="10" Foreground="#888" Margin="0,0,0,8"/>
+
+                    <WrapPanel Margin="0,0,0,10">
+                        <Button Content="Golden Foil" Click="PresetGoldenFoil_Click" Padding="12,6" Margin="0,0,8,8" FontSize="11"/>
+                        <Button Content="Chrome" Click="PresetChrome_Click" Padding="12,6" Margin="0,0,8,8" FontSize="11"/>
+                        <Button Content="Ember Forge" Click="PresetEmberForge_Click" Padding="12,6" Margin="0,0,8,8" FontSize="11"/>
+                        <Button Content="Holographic Card" Click="PresetHolographic_Click" Padding="12,6" Margin="0,0,8,8" FontSize="11"/>
+                    </WrapPanel>
+
+                    <TextBlock Text="Ambient Themes" FontWeight="SemiBold" FontSize="13" Margin="0,10,0,3"/>
+                    <TextBlock Text="Shimmer with a relaxed, understated vibe."
+                               FontSize="10" Foreground="#888" Margin="0,0,0,8"/>
+
+                    <WrapPanel Margin="0,0,0,10">
+                        <Button Content="Subtle Gleam" Click="PresetSubtleGleam_Click" Padding="12,6" Margin="0,0,8,8" FontSize="11"/>
+                        <Button Content="Neon Pulse" Click="PresetNeonPulse_Click" Padding="12,6" Margin="0,0,8,8" FontSize="11"/>
+                    </WrapPanel>
+
+                    <TextBlock Text="Signature Themes" FontWeight="SemiBold" FontSize="13" Margin="0,10,0,8"/>
+
+                    <WrapPanel Margin="0,0,0,10">
+                        <Button Content="Huddini - Synthwave Cruiser (Square)" Click="PresetSynthwaveCruiserSquare_Click" Padding="12,6" Margin="0,0,8,8" FontSize="11"/>
+                        <Button Content="Huddini - Synthwave Cruiser (Circle)" Click="PresetSynthwaveCruiserCircle_Click" Padding="12,6" Margin="0,0,8,8" FontSize="11"/>
+                    </WrapPanel>
+
+                    <TextBlock Text="Showcase Themes" FontWeight="SemiBold" FontSize="13" Margin="0,10,0,3"/>
+                    <TextBlock Text="Everything cranked up — for when you want maximum visual impact."
+                               FontSize="10" Foreground="#888" Margin="0,0,0,8"/>
+
+                    <WrapPanel Margin="0,0,0,10">
+                        <Button Content="Full Spectacle" Click="PresetFullSpectacle_Click" Padding="12,6" Margin="0,0,8,8" FontSize="11"/>
+                        <Button Content="Collector's Edition" Click="PresetCollectorsEdition_Click" Padding="12,6" Margin="0,0,8,8" FontSize="11"/>
+                        <Button Content="Retro Arcade" Click="PresetRetroArcade_Click" Padding="12,6" Margin="0,0,8,8" FontSize="11"/>
+                    </WrapPanel>
+
+                    <Border BorderThickness="0,1,0,0" BorderBrush="#333" Margin="0,15,0,10"/>
+                    <TextBlock Text="Presets modify your Icon Glow settings. Your previous settings are not saved automatically — use Reset to Defaults in the Icon Glow tab to restore defaults."
+                               FontSize="10" Foreground="#888" TextWrapping="Wrap"/>
+                </StackPanel>
+            </ScrollViewer>
+        </TabItem>
+
+        <!-- Disclaimer Tab -->
+        <TabItem Header="About">
+            <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
+                <StackPanel Margin="20">
+                    <TextBlock Text="About BeautyCons" FontSize="18" FontWeight="Bold" Margin="0,0,0,10"/>
+
+                    <TextBlock Text="BeautyCons adds visual effects to game icons in Playnite's detail view by injecting custom WPF elements into the visual tree at runtime."
+                               FontSize="12" TextWrapping="Wrap" Margin="0,0,0,15"/>
+
+                    <TextBlock Text="How It Works" FontWeight="SemiBold" FontSize="13" Margin="0,5,0,5"/>
+                    <TextBlock TextWrapping="Wrap" FontSize="11" Foreground="#CCC" Margin="0,0,0,15">
+                        BeautyCons discovers the game icon element (PART_ImageIcon) in Playnite's visual tree, wraps it in a Grid container, and adds overlay elements for glow effects and shimmer animations. Icon effects like shimmer and luster are rendered per-frame using SkiaSharp at the icon's display resolution.
+                    </TextBlock>
+
+                    <TextBlock Text="Known Limitations" FontWeight="SemiBold" FontSize="13" Margin="0,5,0,5" Foreground="#FFD166"/>
+                    <StackPanel Margin="10,0,0,15">
+                        <TextBlock Text="• Effects are applied at display resolution (~48px), not source icon resolution. Subtle details may not be visible at this size."
+                                   FontSize="11" Foreground="#CCC" TextWrapping="Wrap" Margin="0,0,0,6"/>
+                        <TextBlock Text="• Visual tree injection depends on Playnite's internal element structure, which may vary between themes. Some themes may not expose icons in a compatible way."
+                                   FontSize="11" Foreground="#CCC" TextWrapping="Wrap" Margin="0,0,0,6"/>
+                        <TextBlock Text="• The Circular effect shape is a manual setting — auto-detection of icon shape is not possible through the visual tree."
+                                   FontSize="11" Foreground="#CCC" TextWrapping="Wrap" Margin="0,0,0,6"/>
+                        <TextBlock Text="• Shimmer and luster effects use SkiaSharp software rendering, which is CPU-based. On very large icon displays, this may impact performance."
+                                   FontSize="11" Foreground="#CCC" TextWrapping="Wrap" Margin="0,0,0,6"/>
+                        <TextBlock Text="• WPF's compositing model means overlay effects are alpha-blended over the original icon. This can slightly alter the icon's apparent colors during effect cycles."
+                                   FontSize="11" Foreground="#CCC" TextWrapping="Wrap" Margin="0,0,0,6"/>
+                    </StackPanel>
+
+                    <TextBlock Text="Credits" FontWeight="SemiBold" FontSize="13" Margin="0,5,0,5"/>
+                    <TextBlock Text="Built with SkiaSharp for rendering and Playnite SDK for integration."
+                               FontSize="11" Foreground="#CCC" TextWrapping="Wrap" Margin="0,0,0,5"/>
+                    <TextBlock Text="Metallic luster techniques inspired by simeydotme/pokemon-cards-css."
+                               FontSize="11" Foreground="#CCC" TextWrapping="Wrap" Margin="0,0,0,15"/>
+
+                    <TextBlock Text="Version 1.1.0" FontSize="10" Foreground="#666"/>
+                </StackPanel>
+            </ScrollViewer>
+        </TabItem>
+
         <!-- Preview Tab -->
         <TabItem Header="Preview">
             <Grid>
