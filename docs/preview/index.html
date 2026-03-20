@@ -269,32 +269,27 @@ h2 {
 <div class="footer">BeautyCons v1.0.0 — <a href="https://github.com/aHuddini/BeautyCons">GitHub</a> · <a href="https://twitter.com/Huddini_2k">@Huddini_2k</a></div>
 
 <script>
-// JS-driven transforms applied to .icon-wrap children
+// JS-driven transforms on .icon-card elements directly
+// The entire card (glow + icon + effects + label) rotates as one unit
 (function() {
-  // Target the .icon-wrap inside each animated .icon-card
-  const levitateWraps = document.querySelectorAll('.icon-card.levitate:not(.rotate3d) .icon-wrap');
-  const rotate3dWraps = document.querySelectorAll('.icon-card.rotate3d:not(.levitate) .icon-wrap');
-  const bothWraps = document.querySelectorAll('.icon-card.levitate.rotate3d .icon-wrap');
-
-  console.log('BeautyCons transforms:', levitateWraps.length, 'levitate,', rotate3dWraps.length, 'rotate3d,', bothWraps.length, 'both');
+  var cards = document.querySelectorAll('.icon-card');
 
   function animate(time) {
-    const t = time / 1000;
+    var t = time / 1000;
 
-    levitateWraps.forEach(el => {
-      const y = Math.sin(t * Math.PI * 0.5) * 5;
-      el.style.transform = 'translateY(' + y + 'px)';
-    });
+    cards.forEach(function(card) {
+      var isLev = card.classList.contains('levitate');
+      var isRot = card.classList.contains('rotate3d');
+      if (!isLev && !isRot) return;
 
-    rotate3dWraps.forEach(el => {
-      const ry = Math.sin(t * Math.PI * 0.3) * 8;
-      el.style.transform = 'perspective(400px) rotateY(' + ry + 'deg)';
-    });
+      var y = isLev ? Math.sin(t * 1.57) * 5 : 0;  // PI/2 ≈ 1.57
+      var ry = isRot ? Math.sin(t * 0.9) * 8 : 0;
 
-    bothWraps.forEach(el => {
-      const y = Math.sin(t * Math.PI * 0.5) * 5;
-      const ry = Math.sin(t * Math.PI * 0.28) * 8;
-      el.style.transform = 'perspective(400px) rotateY(' + ry + 'deg) translateY(' + y + 'px)';
+      if (isRot) {
+        card.style.transform = 'perspective(500px) rotateY(' + ry + 'deg) translateY(' + y + 'px)';
+      } else {
+        card.style.transform = 'translateY(' + y + 'px)';
+      }
     });
 
     requestAnimationFrame(animate);
