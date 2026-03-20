@@ -1,6 +1,6 @@
 # BeautyCons Playnite Extension
 
-![Version](https://img.shields.io/badge/version-1.0.0-blue) ![License](https://img.shields.io/badge/license-MIT-green) ![Playnite SDK](https://img.shields.io/badge/Playnite%20SDK-6.15.0-purple) ![Platform](https://img.shields.io/badge/platform-Windows%20x64-lightgrey)
+![Version](https://img.shields.io/badge/version-1.0.0-blue) ![License](https://img.shields.io/badge/license-MIT-green) ![Playnite SDK](https://img.shields.io/badge/Playnite%20SDK-6.15.0-purple) ![Total Downloads](https://img.shields.io/github/downloads/aHuddini/BeautyCons/total?label=downloads&color=brightgreen)
 
 <p align="center">
   <img src="docs/screenshots/BeautyConsLOGO.png" alt="BeautyCons" width="150">
