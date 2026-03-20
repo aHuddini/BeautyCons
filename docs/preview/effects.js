@@ -69,36 +69,44 @@
     icon.appendChild(container);
   });
 
-  // ── LUSTER ──
+  // ── LUSTER (canvas-based, reads icon pixels) ──
   document.querySelectorAll('.card[data-fx]').forEach(function (card) {
     var fx = card.dataset.fx || '';
     if (fx.indexOf('luster') === -1) return;
 
-    var icon = card.querySelector('.icon');
-    if (!icon) return;
+    var iconEl = card.querySelector('.icon');
+    var img = card.querySelector('.icon img');
+    if (!iconEl || !img) return;
 
     var shine = card.dataset.shine || 'white';
-    var el = document.createElement('div');
-    el.className = 'luster-el';
+    var canvas = document.createElement('canvas');
+    canvas.width = 56;
+    canvas.height = 56;
+    canvas.className = 'luster-el';
+    canvas._shine = shine;
+    canvas._img = img;
+    canvas._ready = false;
 
-    var grad;
-    switch (shine) {
-      case 'gold':
-        grad = 'linear-gradient(110deg, rgba(255,210,80,0.5) 0%, transparent 50%, rgba(60,40,5,0.3) 100%)';
-        break;
-      case 'platinum':
-        grad = 'linear-gradient(110deg, rgba(200,220,255,0.5) 0%, transparent 50%, rgba(20,30,50,0.3) 100%)';
-        break;
-      case 'crimson':
-        grad = 'linear-gradient(110deg, rgba(255,100,60,0.5) 0%, transparent 50%, rgba(50,5,5,0.3) 100%)';
-        break;
-      default:
-        grad = 'linear-gradient(110deg, rgba(255,255,255,0.45) 0%, transparent 50%, rgba(0,0,0,0.25) 100%)';
+    // Once the image loads, cache its pixel data
+    function cachePixels() {
+      var ctx = canvas.getContext('2d');
+      ctx.drawImage(img, 0, 0, 56, 56);
+      try {
+        canvas._pixels = ctx.getImageData(0, 0, 56, 56);
+        canvas._ready = true;
+      } catch (e) {
+        // Cross-origin: fall back to gradient overlay
+        canvas._ready = false;
+      }
     }
 
-    el.style.background = grad;
-    el._shine = shine;
-    icon.appendChild(el);
+    if (img.complete) {
+      cachePixels();
+    } else {
+      img.addEventListener('load', cachePixels);
+    }
+
+    iconEl.appendChild(canvas);
   });
 
   // ── LINK SHIMMER + LUSTER PER CARD ──
@@ -133,19 +141,71 @@
         c.bar.style.opacity = fade;
       }
 
-      // Luster follows the same wave — angle tracks the bar position
-      if (c.luster) {
-        var angle = 110 + wave * 60;
-        var intensity = 0.75 + wave * 0.25;
-        var shine = c.luster._shine || 'white';
-        var bright, dark;
+      // Luster — canvas-based per-pixel lighting synced with shimmer
+      if (c.luster && c.luster._ready && c.luster._pixels) {
+        var canvas = c.luster;
+        var ctx = canvas.getContext('2d');
+        var src = canvas._pixels;
+        var out = ctx.createImageData(56, 56);
+        var dir = wave; // -1 to 1, synced with shimmer
+        var strength = Math.abs(dir) * 0.8;
+        var shine = canvas._shine || 'white';
+
+        // Tint colors per shine style
+        var tR = 1, tG = 1, tB = 1;
+        var sR = 0, sG = 0, sB = 0;
         switch (shine) {
-          case 'gold': bright = 'rgba(255,210,80,' + (intensity + 0.1) + ')'; dark = 'rgba(60,40,5,0.3)'; break;
-          case 'platinum': bright = 'rgba(200,220,255,' + (intensity + 0.1) + ')'; dark = 'rgba(20,30,50,0.3)'; break;
-          case 'crimson': bright = 'rgba(255,100,60,' + (intensity + 0.1) + ')'; dark = 'rgba(50,5,5,0.3)'; break;
-          default: bright = 'rgba(255,255,255,' + (intensity + 0.1) + ')'; dark = 'rgba(0,0,0,0.25)';
+          case 'gold': tR = 1; tG = 0.85; tB = 0.4; sR = 0.3; sG = 0.2; sB = 0.05; break;
+          case 'platinum': tR = 0.85; tG = 0.9; tB = 1; sR = 0.1; sG = 0.12; sB = 0.2; break;
+          case 'crimson': tR = 1; tG = 0.5; tB = 0.35; sR = 0.2; sG = 0.03; sB = 0.03; break;
         }
-        c.luster.style.background = 'linear-gradient(' + angle + 'deg, ' + bright + ' 0%, transparent 50%, ' + dark + ' 100%)';
+
+        for (var i = 0; i < src.data.length; i += 4) {
+          var px = (i / 4) % 56;
+          var a = src.data[i + 3];
+          if (a === 0) { out.data[i + 3] = 0; continue; }
+
+          var nx = px / 56;
+          var lightCenter = 0.5 - dir * 0.35;
+          var lightFactor = -(nx - lightCenter) * (dir > 0 ? 1 : -1) * 3;
+          lightFactor = Math.max(-1, Math.min(1, lightFactor)) * strength;
+
+          var r = src.data[i] / 255;
+          var g = src.data[i + 1] / 255;
+          var b = src.data[i + 2] / 255;
+
+          if (lightFactor > 0) {
+            // Saturate
+            var lum = 0.299 * r + 0.587 * g + 0.114 * b;
+            var sat = 1 + lightFactor * 2;
+            r = lum + (r - lum) * sat;
+            g = lum + (g - lum) * sat;
+            b = lum + (b - lum) * sat;
+            r = Math.max(0, r); g = Math.max(0, g); b = Math.max(0, b);
+
+            // Screen brightness
+            var lift = lightFactor * 0.85;
+            r = 1 - (1 - r) * (1 - lift);
+            g = 1 - (1 - g) * (1 - lift);
+            b = 1 - (1 - b) * (1 - lift);
+
+            // Tint
+            var ta = lightFactor * 0.3;
+            r = r * (1 - ta) + tR * ta;
+            g = g * (1 - ta) + tG * ta;
+            b = b * (1 - ta) + tB * ta;
+          } else {
+            var dim = 1 + lightFactor * 0.4;
+            r *= dim; g *= dim; b *= dim;
+          }
+
+          out.data[i] = Math.min(255, Math.max(0, r * 255));
+          out.data[i + 1] = Math.min(255, Math.max(0, g * 255));
+          out.data[i + 2] = Math.min(255, Math.max(0, b * 255));
+          out.data[i + 3] = a;
+        }
+
+        ctx.putImageData(out, 0, 0);
       }
 
       // Transforms

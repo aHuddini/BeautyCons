@@ -101,12 +101,13 @@ section .note {
 /* ── LUSTER (injected by JS) ── */
 .icon .luster-el {
   position: absolute;
-  top: 6px; left: 6px;
-  width: 60px; height: 60px;
+  top: 8px; left: 8px;
+  width: 56px; height: 56px;
   z-index: 4; border-radius: 6px;
   pointer-events: none;
-  mix-blend-mode: hard-light;
+  opacity: 0.85;
 }
+.icon.circle .luster-el { border-radius: 50%; }
 
 /* ── FOOTER ── */
 footer {
