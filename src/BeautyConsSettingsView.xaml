@@ -413,8 +413,12 @@
                     <TextBlock Text="Quick-apply effect combinations. Use as a starting point, then customize in the Icon Glow tab."
                                FontSize="11" Foreground="Gray" TextWrapping="Wrap" Margin="0,0,0,15"/>
 
-                    <!-- ── GLOW ONLY (no shimmer/shine) ── -->
-                    <TextBlock Text="Glow Only" FontWeight="SemiBold" FontSize="13" Margin="0,5,0,3"/>
+                    <!-- ── SQUARE ICON PRESETS ── -->
+                    <TextBlock Text="Square Icon Presets" FontSize="14" FontWeight="Bold" Foreground="#aaa" Margin="0,5,0,3"/>
+                    <TextBlock Text="Optimized for standard square game icons (Effect Shape: Square)."
+                               FontSize="10" Foreground="#666" Margin="0,0,0,12"/>
+
+                    <TextBlock Text="Glow Only" FontWeight="SemiBold" FontSize="13" Margin="0,0,0,3"/>
                     <TextBlock Text="Clean glow effects without shimmer or shine — great starting points."
                                FontSize="10" Foreground="#888" Margin="0,0,0,8"/>
 
@@ -424,10 +428,7 @@
                         <Button Content="Subtle Gleam" Click="PresetSubtleGleamClean_Click" Padding="12,6" Margin="0,0,8,8" FontSize="11"/>
                     </WrapPanel>
 
-                    <!-- ── WITH SHIMMER & SHINE ── -->
-                    <Border BorderThickness="0,1,0,0" BorderBrush="#333" Margin="0,10,0,12"/>
-
-                    <TextBlock Text="Metallic Themes" FontWeight="SemiBold" FontSize="13" Margin="0,0,0,3"/>
+                    <TextBlock Text="Metallic" FontWeight="SemiBold" FontSize="13" Margin="0,10,0,3"/>
                     <TextBlock Text="Shimmer bars and metallic luster for a foil / chrome look."
                                FontSize="10" Foreground="#888" Margin="0,0,0,8"/>
 
@@ -438,7 +439,7 @@
                         <Button Content="Holographic Card" Click="PresetHolographic_Click" Padding="12,6" Margin="0,0,8,8" FontSize="11"/>
                     </WrapPanel>
 
-                    <TextBlock Text="Ambient Themes" FontWeight="SemiBold" FontSize="13" Margin="0,10,0,3"/>
+                    <TextBlock Text="Ambient" FontWeight="SemiBold" FontSize="13" Margin="0,10,0,3"/>
                     <TextBlock Text="Shimmer with a relaxed, understated vibe."
                                FontSize="10" Foreground="#888" Margin="0,0,0,8"/>
 
@@ -447,14 +448,7 @@
                         <Button Content="Neon Pulse" Click="PresetNeonPulse_Click" Padding="12,6" Margin="0,0,8,8" FontSize="11"/>
                     </WrapPanel>
 
-                    <TextBlock Text="Signature Themes" FontWeight="SemiBold" FontSize="13" Margin="0,10,0,8"/>
-
-                    <WrapPanel Margin="0,0,0,10">
-                        <Button Content="Huddini - Synthwave Cruiser (Square)" Click="PresetSynthwaveCruiserSquare_Click" Padding="12,6" Margin="0,0,8,8" FontSize="11"/>
-                        <Button Content="Huddini - Synthwave Cruiser (Circle)" Click="PresetSynthwaveCruiserCircle_Click" Padding="12,6" Margin="0,0,8,8" FontSize="11"/>
-                    </WrapPanel>
-
-                    <TextBlock Text="Showcase Themes" FontWeight="SemiBold" FontSize="13" Margin="0,10,0,3"/>
+                    <TextBlock Text="Showcase" FontWeight="SemiBold" FontSize="13" Margin="0,10,0,3"/>
                     <TextBlock Text="Everything cranked up — for when you want maximum visual impact."
                                FontSize="10" Foreground="#888" Margin="0,0,0,8"/>
 
@@ -462,6 +456,27 @@
                         <Button Content="Full Spectacle" Click="PresetFullSpectacle_Click" Padding="12,6" Margin="0,0,8,8" FontSize="11"/>
                         <Button Content="Collector's Edition" Click="PresetCollectorsEdition_Click" Padding="12,6" Margin="0,0,8,8" FontSize="11"/>
                         <Button Content="Retro Arcade" Click="PresetRetroArcade_Click" Padding="12,6" Margin="0,0,8,8" FontSize="11"/>
+                    </WrapPanel>
+
+                    <!-- ── CIRCULAR ICON PRESETS ── -->
+                    <Border BorderThickness="0,1,0,0" BorderBrush="#333" Margin="0,15,0,12"/>
+
+                    <TextBlock Text="Circular Icon Presets" FontSize="14" FontWeight="Bold" Foreground="#aaa" Margin="0,0,0,3"/>
+                    <TextBlock Text="Optimized for circular, small, or transparent icons (Effect Shape: Circular). Orbiting shimmer and luster clipped to circular bounds."
+                               FontSize="10" Foreground="#666" TextWrapping="Wrap" Margin="0,0,0,12"/>
+
+                    <WrapPanel Margin="0,0,0,10">
+                        <Button Content="Huddini - Synthwave Cruiser (Circle)" Click="PresetSynthwaveCruiserCircle_Click" Padding="12,6" Margin="0,0,8,8" FontSize="11"/>
+                    </WrapPanel>
+
+                    <!-- ── SIGNATURE ── -->
+                    <Border BorderThickness="0,1,0,0" BorderBrush="#333" Margin="0,15,0,12"/>
+
+                    <TextBlock Text="Signature Themes" FontWeight="SemiBold" FontSize="13" Margin="0,0,0,8"/>
+
+                    <WrapPanel Margin="0,0,0,10">
+                        <Button Content="Huddini - Synthwave Cruiser (Square)" Click="PresetSynthwaveCruiserSquare_Click" Padding="12,6" Margin="0,0,8,8" FontSize="11"/>
+                        <Button Content="Huddini - Synthwave Cruiser (Circle)" Click="PresetSynthwaveCruiserCircle_Click" Padding="12,6" Margin="0,0,8,8" FontSize="11"/>
                     </WrapPanel>
 
                     <Border BorderThickness="0,1,0,0" BorderBrush="#333" Margin="0,15,0,10"/>

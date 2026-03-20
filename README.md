@@ -12,7 +12,7 @@
   </a>
 </p>
 
-A Playnite extension that adds glow effects, metallic shimmer, and transform animations to game icons in the detail view.
+A Playnite extension that adds beautiful glow effects, metallic shimmer, and transform animations to Desktop game icons in the detail view.
 
 Built with the help of Claude Code and Cursor IDE
 
