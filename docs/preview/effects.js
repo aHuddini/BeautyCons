@@ -118,13 +118,13 @@
       // Fade at edges using a smooth envelope
       var fade = 1 - Math.pow(Math.abs(wave), 4); // fades near extremes
       bar.style.left = pos + '%';
-      bar.style.opacity = fade * 0.9;
+      bar.style.opacity = fade;
     });
 
     // Luster — smooth gradient angle shift, no scaleX flip
     lusterEls.forEach(function (el) {
-      var angle = 110 + Math.sin(t * 1.0) * 40; // sweeps 70-150deg
-      var intensity = 0.6 + Math.sin(t * 1.0) * 0.2;
+      var angle = 110 + Math.sin(t * 1.0) * 55; // sweeps 55-165deg
+      var intensity = 0.6 + Math.sin(t * 1.0) * 0.3;
       var shine = el._shine || 'white';
       var bright, dark;
       switch (shine) {
@@ -143,12 +143,12 @@
       var hasRot = fx.indexOf('rotate3d') !== -1;
       if (!hasLev && !hasRot) return;
 
-      var translateY = hasLev ? Math.sin(t * 1.5) * 5 : 0;
-      var rotateY = hasRot ? Math.sin(t * 0.7) * 12 : 0;
+      var translateY = hasLev ? Math.sin(t * 1.5) * 7 : 0;
+      var rotateY = hasRot ? Math.sin(t * 0.7) * 18 : 0;
 
       var transform = '';
       if (hasRot) {
-        transform += 'perspective(200px) rotateY(' + rotateY + 'deg) ';
+        transform += 'perspective(150px) rotateY(' + rotateY + 'deg) ';
       }
       if (hasLev) {
         transform += 'translateY(' + translateY + 'px)';
