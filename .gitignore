@@ -15,6 +15,12 @@ pext/
 # Claude Code
 src/.claude/
 
+# Superpowers specs/plans (generated)
+docs/superpowers/
+
+# Release notes (local drafts)
+docs/releases/
+
 # OS
 Thumbs.db
 Desktop.ini

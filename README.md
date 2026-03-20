@@ -26,18 +26,75 @@ Built with the help of Claude Code and Cursor IDE
 
 ## Features
 
-- **8 Glow Styles** — Neon, Soft, Sharp, Bloom, Halo, Diamond, Cross, Star with 13+ color presets
+### Glow & Color
+
+8 glow styles with 13+ color presets or auto-extracted icon colors.
 
 ![Color Presets](docs/screenshots/3.png)
-- **Shimmer** — Diagonal shine bar or orbiting highlight spot with style-specific tinting
-- **Metallic Luster** — Per-pixel directional lighting (Gold, Platinum, Crimson, Holographic, Icon Colors)
-- **Levitation** — Slow continuous float
-- **3D Rotation** — Fake perspective turntable
-- **Tilt, Hover, Breathing Scale** — Subtle motion effects
-- **Shadow Drift / Parallax** — Glow shifts opposite to tilt for depth
-- **Sparkles, Pulse, Color Cycle, Spin** — Glow animations
-- **Effect Shape** — Square (directional sweep) or Circular (orbiting, clipped to bounds)
-- **Theme Presets** — Quick-apply across 5 categories: Glow Only, Metallic, Ambient, Signature, Showcase
+
+| Style | Description |
+|-------|-------------|
+| Neon | Multi-layer additive glow with gradient separation |
+| Soft | Wide dreamy single-layer glow |
+| Sharp | Tight bright edge highlight |
+| Bloom | Overexposed center with wide soft falloff |
+| Halo | Soft ring around the icon |
+| Diamond / Cross / Star | Geometric shape-based glows |
+
+### Static Effects
+
+Applied to the icon surface — visible even without animations running.
+
+| Effect | Description |
+|--------|-------------|
+| **Metallic Luster** | Per-pixel directional lighting — saturates and brightens the lit side, dims the shadow side. Tints per shine style |
+| **Effect Shape** | Square (directional sweep) or Circular (orbiting, clipped to icon bounds) |
+| **Shadow Drift** | Glow shifts opposite to tilt for a depth shadow illusion |
+| **Parallax** | Glow layer offsets opposite to tilt, creating depth between glow and icon |
+
+### Animated Effects
+
+Motion and shimmer effects with configurable speed, timing, and pauses.
+
+| Effect | Description |
+|--------|-------------|
+| **Shimmer** | Diagonal shine bar (square) or orbiting highlight spot (circular) |
+| **Shine Sweep** | Standalone WPF shine bar or orbiting ellipse |
+| **Tilt** | Subtle skew synchronized with shimmer cycle |
+| **Levitation** | Slow continuous sine-wave float up and down |
+| **3D Rotation** | Fake perspective turntable — icon appears to rotate left and right |
+| **Hover** | Mouse-reactive tilt, scale, and levitation |
+| **Breathing Scale** | Slow continuous scale pulse |
+| **Pulse** | Glow opacity breathes in and out |
+| **Color Cycle** | Glow hue shifts gradually over time |
+| **Sparkles** | Bright dots spawn, drift, and fade around the glow |
+| **Spin** | Glow rotates around the icon |
+
+### Shine Styles
+
+The shimmer bar and luster tint adapt to the selected style.
+
+| Style | Highlight | Shadow |
+|-------|-----------|--------|
+| **White** | Neutral clean metallic | Neutral dark |
+| **Gold** | Warm golden | Deep bronze |
+| **Platinum** | Cool chrome-silver | Blue-steel |
+| **Crimson** | Hot red-orange | Deep ember |
+| **Holographic** | Rainbow hue shift | Neutral |
+| **Icon Colors** | Icon palette tint | Icon palette dark |
+
+### Theme Presets
+
+Quick-apply configurations across 5 categories. Use as starting points, then customize.
+
+| Category | Presets |
+|----------|--------|
+| **Glow Only** | Cozy Glow, Neon Pulse, Subtle Gleam |
+| **Metallic** | Golden Foil, Chrome, Ember Forge, Holographic Card |
+| **Ambient** | Subtle Gleam, Neon Pulse |
+| **Signature** | Huddini - Synthwave Cruiser (Square / Circle) |
+| **Showcase** | Full Spectacle, Collector's Edition, Retro Arcade |
+
 ---
 
 ## Installation
