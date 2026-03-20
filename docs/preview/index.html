@@ -23,7 +23,7 @@ h2 {
   width: 100%; max-width: 800px; text-align: center;
 }
 .showcase { display: flex; flex-wrap: wrap; gap: 45px; justify-content: center; max-width: 850px; }
-.icon-card { display: flex; flex-direction: column; align-items: center; gap: 10px; perspective: 400px; }
+.icon-card { display: flex; flex-direction: column; align-items: center; gap: 10px; }
 .label { font-size: 10px; color: #666; text-transform: uppercase; letter-spacing: 1px; }
 
 .icon-wrap { position: relative; width: 84px; height: 84px; }
@@ -269,31 +269,32 @@ h2 {
 <div class="footer">BeautyCons v1.0.0 — <a href="https://github.com/aHuddini/BeautyCons">GitHub</a> · <a href="https://twitter.com/Huddini_2k">@Huddini_2k</a></div>
 
 <script>
-// JS-driven transforms — reliable 3D rotation, levitation, combined
+// JS-driven transforms applied to .icon-wrap children
 (function() {
-  const els = {
-    levitate: document.querySelectorAll('.levitate:not(.rotate3d)'),
-    rotate3d: document.querySelectorAll('.rotate3d:not(.levitate)'),
-    both: document.querySelectorAll('.levitate.rotate3d')
-  };
+  // Target the .icon-wrap inside each animated .icon-card
+  const levitateWraps = document.querySelectorAll('.icon-card.levitate:not(.rotate3d) .icon-wrap');
+  const rotate3dWraps = document.querySelectorAll('.icon-card.rotate3d:not(.levitate) .icon-wrap');
+  const bothWraps = document.querySelectorAll('.icon-card.levitate.rotate3d .icon-wrap');
+
+  console.log('BeautyCons transforms:', levitateWraps.length, 'levitate,', rotate3dWraps.length, 'rotate3d,', bothWraps.length, 'both');
 
   function animate(time) {
     const t = time / 1000;
 
-    els.levitate.forEach(el => {
+    levitateWraps.forEach(el => {
       const y = Math.sin(t * Math.PI * 0.5) * 5;
-      el.style.transform = `translateY(${y}px)`;
+      el.style.transform = 'translateY(' + y + 'px)';
     });
 
-    els.rotate3d.forEach(el => {
-      const ry = Math.sin(t * Math.PI * 0.3) * 6;
-      el.style.transform = `perspective(400px) rotateY(${ry}deg)`;
+    rotate3dWraps.forEach(el => {
+      const ry = Math.sin(t * Math.PI * 0.3) * 8;
+      el.style.transform = 'perspective(400px) rotateY(' + ry + 'deg)';
     });
 
-    els.both.forEach(el => {
+    bothWraps.forEach(el => {
       const y = Math.sin(t * Math.PI * 0.5) * 5;
-      const ry = Math.sin(t * Math.PI * 0.28) * 6;
-      el.style.transform = `perspective(400px) rotateY(${ry}deg) translateY(${y}px)`;
+      const ry = Math.sin(t * Math.PI * 0.28) * 8;
+      el.style.transform = 'perspective(400px) rotateY(' + ry + 'deg) translateY(' + y + 'px)';
     });
 
     requestAnimationFrame(animate);
