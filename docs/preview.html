@@ -20,7 +20,7 @@ h2 {
   width: 100%; max-width: 800px; text-align: center;
 }
 .showcase { display: flex; flex-wrap: wrap; gap: 45px; justify-content: center; max-width: 850px; }
-.icon-card { display: flex; flex-direction: column; align-items: center; gap: 10px; }
+.icon-card { display: flex; flex-direction: column; align-items: center; gap: 10px; perspective: 400px; }
 .label { font-size: 10px; color: #666; text-transform: uppercase; letter-spacing: 1px; }
 
 .icon-wrap { position: relative; width: 84px; height: 84px; }
@@ -28,24 +28,24 @@ h2 {
 .icon-wrap img.square { border-radius: 6px; }
 .icon-wrap img.circle { border-radius: 50%; }
 
-/* GLOW */
-.glow { position: absolute; inset: -8px; z-index: 1; opacity: 0.75; }
-.glow.square { border-radius: 12px; filter: blur(10px); }
-.glow.circle { border-radius: 50%; filter: blur(8px); }
+/* GLOW — tighter blur to match plugin's SkiaSharp rendering */
+.glow { position: absolute; inset: -6px; z-index: 1; opacity: 0.8; }
+.glow.square { border-radius: 8px; filter: blur(5px); }
+.glow.circle { border-radius: 50%; filter: blur(4px); }
 
-/* Square glows: ellipse shape */
+/* Square glows */
 .glow.square.glow-neon  { background: radial-gradient(ellipse, var(--c1) 0%, var(--c2) 55%, transparent 75%); }
-.glow.square.glow-bloom { background: radial-gradient(ellipse, rgba(255,255,255,0.25) 0%, var(--c1) 30%, var(--c2) 60%, transparent 85%); filter: blur(14px); }
+.glow.square.glow-bloom { background: radial-gradient(ellipse, rgba(255,255,255,0.3) 0%, var(--c1) 30%, var(--c2) 55%, transparent 80%); filter: blur(7px); }
 .glow.square.glow-halo  { background: radial-gradient(ellipse, transparent 35%, var(--c1) 50%, var(--c2) 65%, transparent 80%); }
-.glow.square.glow-sharp { background: radial-gradient(ellipse, var(--c1) 0%, var(--c2) 35%, transparent 50%); filter: blur(4px); }
-.glow.square.glow-star  { background: conic-gradient(from 0deg, var(--c1), transparent 12%, transparent 22%, var(--c2), transparent 37%, transparent 47%, var(--c1), transparent 62%, transparent 72%, var(--c2), transparent 88%); filter: blur(6px); animation: spin 15s linear infinite; }
+.glow.square.glow-sharp { background: radial-gradient(ellipse, var(--c1) 0%, var(--c2) 35%, transparent 50%); filter: blur(2px); }
+.glow.square.glow-star  { background: conic-gradient(from 0deg, var(--c1), transparent 12%, transparent 22%, var(--c2), transparent 37%, transparent 47%, var(--c1), transparent 62%, transparent 72%, var(--c2), transparent 88%); filter: blur(4px); animation: spin 15s linear infinite; }
 
-/* Circle glows: circle shape */
+/* Circle glows */
 .glow.circle.glow-neon  { background: radial-gradient(circle, var(--c1) 0%, var(--c2) 50%, transparent 70%); }
-.glow.circle.glow-bloom { background: radial-gradient(circle, rgba(255,255,255,0.3) 0%, var(--c1) 25%, var(--c2) 50%, transparent 75%); filter: blur(12px); }
+.glow.circle.glow-bloom { background: radial-gradient(circle, rgba(255,255,255,0.3) 0%, var(--c1) 25%, var(--c2) 50%, transparent 70%); filter: blur(6px); }
 .glow.circle.glow-halo  { background: radial-gradient(circle, transparent 30%, var(--c1) 45%, var(--c2) 60%, transparent 75%); }
-.glow.circle.glow-sharp { background: radial-gradient(circle, var(--c1) 0%, var(--c2) 30%, transparent 45%); filter: blur(4px); }
-.glow.circle.glow-star  { background: conic-gradient(from 0deg, var(--c1), transparent 12%, transparent 22%, var(--c2), transparent 37%, transparent 47%, var(--c1), transparent 62%, transparent 72%, var(--c2), transparent 88%); filter: blur(5px); animation: spin 15s linear infinite; }
+.glow.circle.glow-sharp { background: radial-gradient(circle, var(--c1) 0%, var(--c2) 30%, transparent 45%); filter: blur(2px); }
+.glow.circle.glow-star  { background: conic-gradient(from 0deg, var(--c1), transparent 12%, transparent 22%, var(--c2), transparent 37%, transparent 47%, var(--c1), transparent 62%, transparent 72%, var(--c2), transparent 88%); filter: blur(3px); animation: spin 15s linear infinite; }
 
 /* SHIMMER — SQUARE ONLY */
 .shimmer { position: absolute; top: 10px; left: 10px; width: 64px; height: 64px; z-index: 3; overflow: hidden; pointer-events: none; border-radius: 6px; }
@@ -66,10 +66,10 @@ h2 {
 
 /* TRANSFORMS */
 .levitate { animation: float 4s ease-in-out infinite; }
-.rotate3d { animation: turntable 7s ease-in-out infinite alternate; perspective: 300px; }
+.rotate3d { animation: turntable 7s ease-in-out infinite alternate; transform-style: preserve-3d; }
 .breathe  { animation: breathe 4s ease-in-out infinite; }
 .pulse .glow { animation: pulse-glow 3s ease-in-out infinite; }
-.levitate.rotate3d { animation: float-turn 7s ease-in-out infinite; }
+.levitate.rotate3d { animation: float-turn 7s ease-in-out infinite; transform-style: preserve-3d; }
 
 /* SPARKLES */
 .sparkles { position: absolute; inset: -12px; z-index: 5; pointer-events: none; }
@@ -80,8 +80,8 @@ h2 {
 @keyframes luster-dir { 0%{opacity:.7;transform:scaleX(1)} 50%{opacity:.9} 100%{opacity:.7;transform:scaleX(-1)} }
 @keyframes spin { to{transform:rotate(360deg)} }
 @keyframes float { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-5px)} }
-@keyframes turntable { 0%{transform:perspective(300px) rotateY(-4deg)} 100%{transform:perspective(300px) rotateY(4deg)} }
-@keyframes float-turn { 0%{transform:perspective(300px) rotateY(-3deg) translateY(0)} 25%{transform:perspective(300px) rotateY(0deg) translateY(-5px)} 50%{transform:perspective(300px) rotateY(3deg) translateY(0)} 75%{transform:perspective(300px) rotateY(0deg) translateY(-5px)} 100%{transform:perspective(300px) rotateY(-3deg) translateY(0)} }
+@keyframes turntable { 0%{transform:rotateY(-6deg)} 100%{transform:rotateY(6deg)} }
+@keyframes float-turn { 0%{transform:rotateY(-5deg) translateY(0)} 25%{transform:rotateY(0deg) translateY(-5px)} 50%{transform:rotateY(5deg) translateY(0)} 75%{transform:rotateY(0deg) translateY(-5px)} 100%{transform:rotateY(-5deg) translateY(0)} }
 @keyframes breathe { 0%,100%{transform:scale(1)} 50%{transform:scale(1.04)} }
 @keyframes pulse-glow { 0%,100%{opacity:.45} 50%{opacity:.9} }
 @keyframes sparkle { 0%{opacity:0;transform:scale(0)} 40%{opacity:1;transform:scale(1.2)} 100%{opacity:0;transform:scale(0) translateY(-10px)} }
