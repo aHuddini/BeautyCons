@@ -72,28 +72,11 @@ Motion and shimmer effects with configurable speed, timing, and pauses.
 
 ### Shine Styles
 
-The shimmer bar and luster tint adapt to the selected style.
-
-| Style | Highlight | Shadow |
-|-------|-----------|--------|
-| **White** | Neutral clean metallic | Neutral dark |
-| **Gold** | Warm golden | Deep bronze |
-| **Platinum** | Cool chrome-silver | Blue-steel |
-| **Crimson** | Hot red-orange | Deep ember |
-| **Holographic** | Rainbow hue shift | Neutral |
-| **Icon Colors** | Icon palette tint | Icon palette dark |
+6 luster tints: **White**, **Gold**, **Platinum**, **Crimson**, **Holographic**, **Icon Colors**
 
 ### Theme Presets
 
-Quick-apply configurations across 5 categories. Use as starting points, then customize.
-
-| Category | Presets |
-|----------|--------|
-| **Glow Only** | Cozy Glow, Neon Pulse, Subtle Gleam |
-| **Metallic** | Golden Foil, Chrome, Ember Forge, Holographic Card |
-| **Ambient** | Subtle Gleam, Neon Pulse |
-| **Signature** | Huddini - Synthwave Cruiser (Square / Circle) |
-| **Showcase** | Full Spectacle, Collector's Edition, Retro Arcade |
+13 quick-apply presets for Square and Circular icons. Use as starting points, then customize.
 
 ---
 
