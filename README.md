@@ -27,6 +27,8 @@ Built with the help of Claude Code and Cursor IDE
 ## Features
 
 - **8 Glow Styles** — Neon, Soft, Sharp, Bloom, Halo, Diamond, Cross, Star with 13+ color presets
+
+![Color Presets](docs/screenshots/3.png)
 - **Shimmer** — Diagonal shine bar or orbiting highlight spot with style-specific tinting
 - **Metallic Luster** — Per-pixel directional lighting (Gold, Platinum, Crimson, Holographic, Icon Colors)
 - **Levitation** — Slow continuous float
