@@ -97,6 +97,7 @@
     }
 
     el.style.background = grad;
+    el._shine = shine;
     icon.appendChild(el);
   });
 
@@ -108,25 +109,31 @@
   function tick(time) {
     var t = time * 0.001;
 
-    // Shimmer bars sweep
+    // Shimmer bars — smooth sine sweep, no abrupt cuts
     shimmerBars.forEach(function (bar) {
       var phase = bar._phase || 0;
-      var cycle = ((t * 0.8 + phase) % 4); // 4 second cycle
-      var pos;
-      if (cycle < 1.5) {
-        pos = (cycle / 1.5) * 100 - 10; // sweep 0-100%
-      } else {
-        pos = -30; // hidden during pause
-      }
+      // Smooth sine: -1 to 1 mapped to -20% to 100% position
+      var wave = Math.sin(t * 0.7 + phase);
+      var pos = (wave + 1) * 0.5 * 120 - 20; // range: -20 to 100
+      // Fade at edges using a smooth envelope
+      var fade = 1 - Math.pow(Math.abs(wave), 4); // fades near extremes
       bar.style.left = pos + '%';
-      bar.style.opacity = (pos >= -10 && pos <= 90) ? 1 : 0;
+      bar.style.opacity = fade * 0.9;
     });
 
-    // Luster direction flip
+    // Luster — smooth gradient angle shift, no scaleX flip
     lusterEls.forEach(function (el) {
-      var dir = Math.sin(t * 1.2);
-      el.style.transform = 'scaleX(' + (dir > 0 ? 1 : -1) + ')';
-      el.style.opacity = 0.6 + Math.abs(dir) * 0.3;
+      var angle = 110 + Math.sin(t * 1.0) * 40; // sweeps 70-150deg
+      var intensity = 0.6 + Math.sin(t * 1.0) * 0.2;
+      var shine = el._shine || 'white';
+      var bright, dark;
+      switch (shine) {
+        case 'gold': bright = 'rgba(255,210,80,' + (intensity + 0.1) + ')'; dark = 'rgba(60,40,5,0.3)'; break;
+        case 'platinum': bright = 'rgba(200,220,255,' + (intensity + 0.1) + ')'; dark = 'rgba(20,30,50,0.3)'; break;
+        case 'crimson': bright = 'rgba(255,100,60,' + (intensity + 0.1) + ')'; dark = 'rgba(50,5,5,0.3)'; break;
+        default: bright = 'rgba(255,255,255,' + (intensity + 0.1) + ')'; dark = 'rgba(0,0,0,0.25)';
+      }
+      el.style.background = 'linear-gradient(' + angle + 'deg, ' + bright + ' 0%, transparent 50%, ' + dark + ' 100%)';
     });
 
     // Card transforms: levitation + 3D rotation
@@ -136,12 +143,12 @@
       var hasRot = fx.indexOf('rotate3d') !== -1;
       if (!hasLev && !hasRot) return;
 
-      var translateY = hasLev ? Math.sin(t * 1.5) * 4 : 0;
-      var rotateY = hasRot ? Math.sin(t * 0.8) * 8 : 0;
+      var translateY = hasLev ? Math.sin(t * 1.5) * 5 : 0;
+      var rotateY = hasRot ? Math.sin(t * 0.7) * 12 : 0;
 
       var transform = '';
       if (hasRot) {
-        transform += 'perspective(500px) rotateY(' + rotateY + 'deg) ';
+        transform += 'perspective(200px) rotateY(' + rotateY + 'deg) ';
       }
       if (hasLev) {
         transform += 'translateY(' + translateY + 'px)';
