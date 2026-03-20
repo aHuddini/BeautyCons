@@ -18,24 +18,15 @@ Built with the help of Claude Code and Cursor IDE
 
 ---
 
-## Demo
-
-![BeautyCons Preview](docs/screenshots/demo.png)
+<p align="center">
+  <img src="docs/screenshots/Animation.gif" alt="BeautyCons Demo" width="600">
+</p>
 
 ---
 
 ## Features
 
-### Glow & Color
-
-8 glow styles with 13+ color presets or auto-extracted icon colors.
-
-![Color Presets](docs/screenshots/3.png)
-
-### Icon Effects
-
-![Signature Preset](docs/screenshots/1.png)
-
+- **8 Glow Styles** — Neon, Soft, Sharp, Bloom, Halo, Diamond, Cross, Star with 13+ color presets
 - **Shimmer** — Diagonal shine bar or orbiting highlight spot with style-specific tinting
 - **Metallic Luster** — Per-pixel directional lighting (Gold, Platinum, Crimson, Holographic, Icon Colors)
 - **Levitation** — Slow continuous float
@@ -43,17 +34,8 @@ Built with the help of Claude Code and Cursor IDE
 - **Tilt, Hover, Breathing Scale** — Subtle motion effects
 - **Shadow Drift / Parallax** — Glow shifts opposite to tilt for depth
 - **Sparkles, Pulse, Color Cycle, Spin** — Glow animations
-
-![Metallic Themes](docs/screenshots/4.png)
-
-### Effect Shape
-
-- **Square** — Directional sweep for standard icons
-- **Circular** — Orbiting effects clipped to circular bounds
-
-### Theme Presets
-
-Quick-apply configurations across 5 categories: Glow Only, Metallic, Ambient, Signature, and Showcase.
+- **Effect Shape** — Square (directional sweep) or Circular (orbiting, clipped to bounds)
+- **Theme Presets** — Quick-apply across 5 categories: Glow Only, Metallic, Ambient, Signature, Showcase
 
 ![In-Game View](docs/screenshots/2.png)
 
