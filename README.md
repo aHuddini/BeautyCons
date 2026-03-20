@@ -19,7 +19,7 @@ Built with the help of Claude Code and Cursor IDE
 ---
 
 <p align="center">
-  <img src="docs/screenshots/Animation.gif" alt="BeautyCons Demo" width="250">
+  <img src="docs/screenshots/Animation.gif" alt="BeautyCons Demo" width="180">
 </p>
 
 ---
