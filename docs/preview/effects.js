@@ -160,14 +160,25 @@
           case 'crimson': tR = 1; tG = 0.5; tB = 0.35; sR = 0.2; sG = 0.03; sB = 0.03; break;
         }
 
+        // Light direction angle shifts with the wave (diagonal sweep)
+        var lightAngle = 0.35 + dir * 0.8; // radians, sweeps ~-0.45 to 1.15
+        var cosA = Math.cos(lightAngle);
+        var sinA = Math.sin(lightAngle);
+
         for (var i = 0; i < src.data.length; i += 4) {
-          var px = (i / 4) % 56;
+          var idx = i / 4;
+          var px = idx % 56;
+          var py = (idx / 56) | 0;
           var a = src.data[i + 3];
           if (a === 0) { out.data[i + 3] = 0; continue; }
 
           var nx = px / 56;
-          var lightCenter = 0.5 - dir * 0.35;
-          var lightFactor = -(nx - lightCenter) * (dir > 0 ? 1 : -1) * 3;
+          var ny = py / 56;
+
+          // Project pixel position onto light direction vector
+          // This creates a diagonal sweep, not just left-right
+          var proj = (nx - 0.5) * cosA + (ny - 0.5) * sinA;
+          var lightFactor = proj * 2.5 * dir;
           lightFactor = Math.max(-1, Math.min(1, lightFactor)) * strength;
 
           var r = src.data[i] / 255;
@@ -177,25 +188,25 @@
           if (lightFactor > 0) {
             // Saturate
             var lum = 0.299 * r + 0.587 * g + 0.114 * b;
-            var sat = 1 + lightFactor * 2;
+            var sat = 1 + lightFactor * 1.5;
             r = lum + (r - lum) * sat;
             g = lum + (g - lum) * sat;
             b = lum + (b - lum) * sat;
             r = Math.max(0, r); g = Math.max(0, g); b = Math.max(0, b);
 
-            // Screen brightness
-            var lift = lightFactor * 0.85;
+            // Screen brightness (reduced)
+            var lift = lightFactor * 0.6;
             r = 1 - (1 - r) * (1 - lift);
             g = 1 - (1 - g) * (1 - lift);
             b = 1 - (1 - b) * (1 - lift);
 
-            // Tint
-            var ta = lightFactor * 0.3;
+            // Tint (reduced)
+            var ta = lightFactor * 0.2;
             r = r * (1 - ta) + tR * ta;
             g = g * (1 - ta) + tG * ta;
             b = b * (1 - ta) + tB * ta;
           } else {
-            var dim = 1 + lightFactor * 0.4;
+            var dim = 1 + lightFactor * 0.3;
             r *= dim; g *= dim; b *= dim;
           }
 
