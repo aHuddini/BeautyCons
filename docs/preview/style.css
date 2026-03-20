@@ -101,11 +101,11 @@ section .note {
 /* ── LUSTER (injected by JS) ── */
 .icon .luster-el {
   position: absolute;
-  top: 8px; left: 8px;
-  width: 56px; height: 56px;
+  top: 6px; left: 6px;
+  width: 60px; height: 60px;
   z-index: 4; border-radius: 6px;
   pointer-events: none;
-  mix-blend-mode: overlay;
+  mix-blend-mode: hard-light;
 }
 
 /* ── FOOTER ── */

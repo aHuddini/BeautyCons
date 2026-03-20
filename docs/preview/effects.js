@@ -123,8 +123,8 @@
 
     // Luster — smooth gradient angle shift, no scaleX flip
     lusterEls.forEach(function (el) {
-      var angle = 110 + Math.sin(t * 1.0) * 55; // sweeps 55-165deg
-      var intensity = 0.6 + Math.sin(t * 1.0) * 0.3;
+      var angle = 110 + Math.sin(t * 1.0) * 60; // sweeps 50-170deg
+      var intensity = 0.75 + Math.sin(t * 1.0) * 0.25;
       var shine = el._shine || 'white';
       var bright, dark;
       switch (shine) {
