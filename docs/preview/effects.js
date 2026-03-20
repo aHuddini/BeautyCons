@@ -206,11 +206,11 @@
             g = g * (1 - ta) + tG * ta;
             b = b * (1 - ta) + tB * ta;
           } else {
-            var dim = 1 + lightFactor * 0.5;
+            var dim = 1 + lightFactor * 0.35;
             r *= dim; g *= dim; b *= dim;
             // Desaturate in shadow
             var slum = 0.299 * r + 0.587 * g + 0.114 * b;
-            var desat = 1 + lightFactor * 0.35;
+            var desat = 1 + lightFactor * 0.25;
             r = slum + (r - slum) * desat;
             g = slum + (g - slum) * desat;
             b = slum + (b - slum) * desat;
